@@ -1,0 +1,1209 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MATHRIX</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jeju+Hallasan&family=Licorice&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-screen="home">
+
+  <!-- Barras -->
+  <header class="topbar" aria-hidden="true">
+    <h2>MATHRIX</h2>
+  </header>
+  <footer class="bottombar" aria-hidden="true"></footer>
+
+  <!-- HOME -->
+  <section id="home" class="screen active" aria-label="Tela inicial">
+    <div class="center">
+      <h1>MATHRIX</h1>
+      <div class="subtitle">Aprenda e melhore o seu cálculo mental</div>
+
+      <button id="startBtn" type="button" aria-label="Start">
+        <span>Iniciar</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- MENU OPERAÇÃO -->
+  <section id="menu" class="screen" aria-label="Menu de operações">
+    <div class="menu-wrap">
+      <div class="grid">
+
+        <button class="card menuCard op" type="button" data-op="add" style="--d: 80ms;">
+          <div class="symbol">+</div>
+          <div class="label">Adição</div>
+        </button>
+
+        <button class="card menuCard op" type="button" data-op="sub" style="--d: 140ms;">
+          <div class="symbol">−</div>
+          <div class="label">Subtração</div>
+        </button>
+
+        <button class="card menuCard op" type="button" data-op="mul" style="--d: 200ms;">
+          <div class="symbol">×</div>
+          <div class="label">Multiplicação</div>
+        </button>
+
+        <button class="card menuCard op" type="button" data-op="div" style="--d: 260ms;">
+          <div class="symbol">÷</div>
+          <div class="label">Divisão</div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIFICULDADE -->
+  <section id="difficulty" class="screen" aria-label="Seleção de dificuldade">
+    <div class="wrap">
+      <div class="top-actions">
+          <button class="back-inline" id="backToMenuFromDifficulty" type="button">← Voltar</button>
+      </div>
+
+      <div class="section-title">Selecione o nível de dificuldade</div>
+
+      <div class="selection-grid" id="difficultyGrid">
+        <button class="select-card diff-card" type="button" data-diff="easy" style="--d: 120ms;">
+          <div class="select-label">Fácil</div>
+        </button>
+
+        <button class="select-card diff-card" type="button" data-diff="medium" style="--d: 220ms;">
+          <div class="select-label">Médio</div>
+        </button>
+
+        <button class="select-card diff-card" type="button" data-diff="hard" style="--d: 320ms;">
+          <div class="select-label">Difícil</div>
+        </button>
+
+        <button class="select-card diff-card" type="button" data-diff="assad" style="--d: 420ms;">
+          <div class="select-label">Impossível</div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODO -->
+  <section id="mode" class="screen" aria-label="Seleção de modo de jogo">
+    <div class="wrap">
+      <div class="top-actions">
+        <button class="back-inline" id="backToDifficultyFromMode" type="button">← Voltar</button>
+      </div>
+
+      <div class="section-title">Selecione a quantidade de rodadas</div>
+
+      <div class="selection-grid" id="modeGrid">
+        <button class="select-card mode-card" type="button" data-mode="5" style="--d: 120ms;">
+          <div class="select-label">5</div>
+        </button>
+
+        <button class="select-card mode-card" type="button" data-mode="10" style="--d: 220ms;">
+          <div class="select-label">10</div>
+        </button>
+
+        <button class="select-card mode-card" type="button" data-mode="20" style="--d: 320ms;">
+          <div class="select-label">20</div>
+        </button>
+
+        <button class="select-card mode-card" type="button" data-mode="endless" style="--d: 420ms;">
+          <div class="select-label">Infinito</div>
+        </button>
+      </div>
+
+      <div class="mode-bottom">
+        <button class="blind-toggle" id="blindToggle" type="button" aria-label="Alternar modo cego">
+          <div class="eye-box">
+            <svg class="eye-svg" viewBox="0 0 60 36" aria-hidden="true">
+              <path class="eye-outline" d="M5 18C10.5 10.5 18 6 30 6c12 0 19.5 4.5 25 12-5.5 7.5-13 12-25 12C18 30 10.5 25.5 5 18Z"></path>
+              <circle class="eye-pupil" id="eyePupil" cx="30" cy="18" r="5.2"></circle>
+              <line class="eye-slash" x1="12" y1="29" x2="48" y2="7"></line>
+            </svg>
+          </div>
+          <div class="blind-text">Modo Cego</div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen" aria-label="Tela do jogo">
+    <div class="game-wrap normal-theme" id="gameWrap">
+
+      <!-- Timer -->
+      <div class="timer-shell" id="timerShell" aria-label="Tempo restante">
+        <div class="timer-fill" id="timerFill"></div>
+      </div>
+
+      <!-- GAME NORMAL -->
+      <div class="game-grid" id="normalGameLayout">
+
+        <!-- Painel esquerdo -->
+        <aside class="panel left">
+          <div class="points">
+            <div class="points-value" id="pointsValue">0</div>
+            <div class="points-label">Pontos</div>
+          </div>
+
+          <div class="difficulty-label" id="difficultyLabel">Dificuldade: Fácil</div>
+          <div class="current-op" id="currentOpLabel">Operação: Adição</div>
+          <div class="mode-label" id="modeLabel">Rodadas: 5</div>
+
+          <button class="back-btn" id="returnToResultsNormal" type="button">Retornar</button>
+        </aside>
+
+        <!-- Centro -->
+        <main class="center-area">
+          <div class="operation" id="operationDisplay">12 + 8</div>
+          <div class="answers" id="answers"></div>
+          <div class="round-tip" id="roundTip">Responda antes do tempo acabar para ganhar mais pontos.</div>
+        </main>
+
+        <!-- Painel direito -->
+        <aside class="panel right">
+          <div class="stat correct" id="correctStat">
+            ✅ <span id="correctValue">0</span> <small>Acertos</small>
+          </div>
+
+          <div class="stat wrong" id="wrongStat">
+            ❌ <span id="wrongValue">0</span> <small>Erros</small>
+          </div>
+
+          <div class="stat">
+            🔁 <span id="roundValue">0</span> <small id="roundMaxLabel">/ 5</small>
+          </div>
+        </aside>
+      </div>
+
+      <!-- GAME BLINDFOLD -->
+      <div class="blind-layout" id="blindLayout">
+        <div class="blind-stage">
+          <div class="blind-countdown" id="blindCountdown">3</div>
+
+          <div class="blind-reveal-card" id="blindRevealCard">
+            <div class="blind-reveal-value" id="blindRevealValue">12</div>
+          </div>
+
+          <div class="blind-answers-shell" id="blindAnswersShell">
+            <div class="blind-answers-grid" id="blindAnswersGrid"></div>
+
+            <div class="blind-footer">
+              <div class="blind-footer-cell">Pontos: <span id="blindPointsValue">0</span></div>
+              <div class="blind-footer-cell">Dificuldade: <span id="blindDifficultyText">Fácil</span></div>
+              <div class="blind-footer-cell ok">✅: <span id="blindCorrectValue">0</span></div>
+              <div class="blind-footer-cell no">❌: <span id="blindWrongValue">0</span></div>
+              <button class="blind-footer-cell blind-return" id="returnToResultsBlind" type="button">Retornar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESULTS SCREEN -->
+  <section id="results" class="screen" aria-label="Tela de resultados">
+    <div class="results-wrap">
+      <div class="results-header">
+        <h3 id="resultsTitle">Missão Completa</h3>
+        <div class="results-note" id="resultsSubheading">Analisando sua habilidade mental...</div>
+      </div>
+
+      <div class="results-stats">
+        <div class="results-box score-box">
+          <strong>Pontuação total</strong>
+          <div id="resultScore" class="big-score">0</div>
+        </div>
+
+        <div class="results-box-group">
+          <div class="results-box sm-box">
+            <strong>Modo</strong>
+            <div id="resultMode" class="val">Normal</div>
+          </div>
+
+          <div class="results-box sm-box">
+            <strong>Regras</strong>
+            <div id="resultMeta" class="val">Add - Fácil</div>
+          </div>
+
+          <div class="results-box sm-box">
+            <strong>Precisão</strong>
+            <div id="resultCW" class="val" style="display:flex; justify-content:center; gap:8px;">
+              <span style="color:#2b793f;" id="cwCorrect">0</span> / 
+              <span style="color:#b23131;" id="cwWrong">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button class="results-btn outline-btn" id="backHomeBtn" type="button">Voltar ao Início</button>
+        <button class="results-btn fill-btn" id="playAgainBtn" type="button">Jogar Novamente</button>
+      </div>
+    </div>
+  </section>
+<script>
+    // ========= Anti seleção / anti clique direito =========
+    document.addEventListener("contextmenu", (e) => e.preventDefault());
+    document.addEventListener("selectstart", (e) => e.preventDefault());
+    document.addEventListener("dragstart", (e) => e.preventDefault());
+
+    // ========= Elementos =========
+    const body = document.body;
+
+    const screens = {
+      home: document.getElementById("home"),
+      menu: document.getElementById("menu"),
+      difficulty: document.getElementById("difficulty"),
+      mode: document.getElementById("mode"),
+      game: document.getElementById("game"),
+      results: document.getElementById("results")
+    };
+
+    const startBtn = document.getElementById("startBtn");
+
+    const menuCards = [...document.querySelectorAll(".menuCard")];
+    const opCards = [...document.querySelectorAll(".card.op")];
+
+    const diffCards = [...document.querySelectorAll(".diff-card")];
+    const modeCards = [...document.querySelectorAll(".mode-card")];
+
+    const backToMenuFromDifficulty = document.getElementById("backToMenuFromDifficulty");
+    const backToDifficultyFromMode = document.getElementById("backToDifficultyFromMode");
+
+    const modeScreen = document.getElementById("mode");
+    const blindToggle = document.getElementById("blindToggle");
+    const eyePupil = document.getElementById("eyePupil");
+
+    // normal game
+    const gameWrap = document.getElementById("gameWrap");
+    const timerShell = document.getElementById("timerShell");
+    const timerFill = document.getElementById("timerFill");
+    const normalGameLayout = document.getElementById("normalGameLayout");
+
+    const operationDisplay = document.getElementById("operationDisplay");
+    const answersEl = document.getElementById("answers");
+    const roundTip = document.getElementById("roundTip");
+
+    const pointsValue = document.getElementById("pointsValue");
+    const difficultyLabel = document.getElementById("difficultyLabel");
+    const currentOpLabel = document.getElementById("currentOpLabel");
+    const modeLabel = document.getElementById("modeLabel");
+    const correctValue = document.getElementById("correctValue");
+    const wrongValue = document.getElementById("wrongValue");
+    const roundValue = document.getElementById("roundValue");
+    const roundMaxLabel = document.getElementById("roundMaxLabel");
+
+    const correctStat = document.getElementById("correctStat");
+    const wrongStat = document.getElementById("wrongStat");
+    const returnToResultsNormal = document.getElementById("returnToResultsNormal");
+
+    // blind game
+    const blindLayout = document.getElementById("blindLayout");
+    const blindCountdown = document.getElementById("blindCountdown");
+    const blindRevealCard = document.getElementById("blindRevealCard");
+    const blindRevealValue = document.getElementById("blindRevealValue");
+    const blindAnswersShell = document.getElementById("blindAnswersShell");
+    const blindAnswersGrid = document.getElementById("blindAnswersGrid");
+
+    const blindPointsValue = document.getElementById("blindPointsValue");
+    const blindDifficultyText = document.getElementById("blindDifficultyText");
+    const blindCorrectValue = document.getElementById("blindCorrectValue");
+    const blindWrongValue = document.getElementById("blindWrongValue");
+    const returnToResultsBlind = document.getElementById("returnToResultsBlind");
+
+    // results
+    const resultScore = document.getElementById("resultScore");
+    const resultMode = document.getElementById("resultMode");
+    const resultMeta = document.getElementById("resultMeta");
+    const cwCorrect = document.getElementById("cwCorrect");
+    const cwWrong = document.getElementById("cwWrong");
+    const playAgainBtn = document.getElementById("playAgainBtn");
+    const backHomeBtn = document.getElementById("backHomeBtn");
+
+    // ========= Estado =========
+    let navigationLocked = false;
+    let roundSequenceToken = 0;
+
+    const game = {
+      operation: "add",
+      difficulty: "easy",
+      mode: "5",              // 5, 10, 20, endless
+      blindfolded: false,
+
+      points: 0,
+      correct: 0,
+      wrong: 0,
+      answeredRounds: 0,
+      targetRounds: 5,
+
+      timeLimitMs: 20000,
+      startAt: 0,
+      endAt: 0,
+      rafId: null,
+      timeExpired: false,
+      roundLocked: false,
+
+      currentQuestion: null,
+      currentOptions: [],
+
+      blindCountdownDone: false,
+      inRevealPhase: false
+    };
+
+    // ========= Utilidades =========
+    function rand(min, max){
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function shuffle(arr){
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function difficultyLabelPT(diff){
+      switch(diff){
+        case "easy": return "Fácil";
+        case "medium": return "Médio";
+        case "hard": return "Difícil";
+        case "assad": return "Impossível";
+        default: return diff;
+      }
+    }
+
+    function operationLabel(op){
+      switch(op){
+        case "add": return "Adição";
+        case "sub": return "Subtração";
+        case "mul": return "Multiplicação";
+        case "div": return "Divisão";
+        default: return "Adição";
+      }
+    }
+
+    function operationSymbol(op){
+      switch(op){
+        case "add": return "+";
+        case "sub": return "−";
+        case "mul": return "×";
+        case "div": return "÷";
+        default: return "+";
+      }
+    }
+
+    function bump(el){
+      el.classList.add("bump");
+      setTimeout(() => el.classList.remove("bump"), 180);
+    }
+
+    function setScreen(name){
+      for(const [key, el] of Object.entries(screens)){
+        el.classList.toggle("active", key === name);
+      }
+      body.dataset.screen = name;
+
+      if(name === "menu"){
+        animateIn(menuCards, "animate-in");
+      } else if(name === "difficulty"){
+        animateIn(diffCards, "animate-in");
+      } else if(name === "mode"){
+        animateIn(modeCards, "animate-in");
+      }
+    }
+
+    function animateIn(elements, className){
+      elements.forEach(el => {
+        el.classList.remove("animate-in", "animate-out");
+        void el.offsetWidth;
+        el.classList.add(className);
+      });
+    }
+
+    function animateOutMenu(){
+      menuCards.forEach(el => {
+        el.classList.remove("animate-in", "animate-out");
+        void el.offsetWidth;
+        el.classList.add("animate-out");
+      });
+    }
+
+    function modeToText(value){
+      return value === "endless" ? "Infinito" : value;
+    }
+
+    function setBlindTheme(active){
+      modeScreen.classList.toggle("mode-blind", active);
+
+      if(body.dataset.screen === "mode"){
+        body.classList.toggle("theme-blind", active);
+      }
+    }
+
+    function updateBodyThemeByScreen(){
+      const shouldBlind = (body.dataset.screen === "mode" && game.blindfolded) ||
+                          (body.dataset.screen === "game" && game.blindfolded);
+      body.classList.toggle("theme-blind", shouldBlind);
+    }
+
+    function getRoundsTarget(mode){
+      if(mode === "endless") return Infinity;
+      return Number(mode);
+    }
+
+    function stopTimer(){
+      if(game.rafId){
+        cancelAnimationFrame(game.rafId);
+        game.rafId = null;
+      }
+    }
+
+    function getTimeLimitMs(){
+      if(!game.blindfolded){
+        return 20000;
+      }
+
+      if(game.difficulty === "easy") return 30000;
+      if(game.difficulty === "medium") return 30000;
+      if(game.difficulty === "hard") return 50000;
+      return 60000; // assad
+    }
+
+    function startTimer(){
+      stopTimer();
+      game.timeExpired = false;
+      game.timeLimitMs = getTimeLimitMs();
+      game.startAt = performance.now();
+      game.endAt = game.startAt + game.timeLimitMs;
+
+      timerFill.classList.remove("expired");
+      if(game.blindfolded){
+        timerFill.style.transform = "scaleX(1)";
+      }else{
+        timerFill.style.width = "100%";
+      }
+
+      const tick = (now) => {
+        const remaining = Math.max(0, game.endAt - now);
+        const percent = remaining / game.timeLimitMs;
+
+        if(game.blindfolded){
+          timerFill.style.transform = `scaleX(${percent})`;
+        }else{
+          timerFill.style.width = (percent * 100) + "%";
+        }
+
+        if(remaining <= 0){
+          game.timeExpired = true;
+          timerFill.classList.add("expired");
+          game.rafId = null;
+
+          if(game.blindfolded){
+            roundTip.textContent = "";
+          }else{
+            roundTip.textContent = "O tempo acabou. Você ainda pode responder, mas uma resposta correta valerá apenas 1 ponto.";
+          }
+          return;
+        }
+
+        game.rafId = requestAnimationFrame(tick);
+      };
+
+      game.rafId = requestAnimationFrame(tick);
+    }
+
+    function getDifficultyRange(diff){
+      switch(diff){
+        case "easy":
+          return [1, 34];
+        case "medium":
+          return [36, 99];
+        case "hard":
+          return [100, 999];
+        case "assad":
+          return [1000, 999999];
+        default:
+          return [1, 34];
+      }
+    }
+
+    function randomByDifficulty(diff = game.difficulty){
+      const [min, max] = getDifficultyRange(diff);
+      return rand(min, max);
+    }
+
+    function buildProblem(){
+      const op = game.operation;
+      const diff = game.difficulty;
+
+      let a = 0;
+      let b = 0;
+      let answer = 0;
+
+      if(op === "add"){
+        a = randomByDifficulty(diff);
+        b = randomByDifficulty(diff);
+        answer = a + b;
+      }
+
+      if(op === "sub"){
+        a = randomByDifficulty(diff);
+        b = randomByDifficulty(diff);
+
+        // Easy não pode dar negativo; do Medium pra cima pode
+        if(diff === "easy" && a < b){
+          [a, b] = [b, a];
+        }
+
+        answer = a - b;
+      }
+
+      if(op === "mul"){
+        a = randomByDifficulty(diff);
+        b = randomByDifficulty(diff);
+
+        // blindfold + assad é propositalmente difícil, como você pediu
+        answer = a * b;
+      }
+
+      if(op === "div"){
+        // garante divisão inteira
+        b = randomByDifficulty(diff);
+        if(b === 0) b = 1;
+
+        let quotient = randomByDifficulty(diff);
+
+        // leve contenção no assad apenas para evitar números impossível de renderizar
+        if(diff === "assad"){
+          quotient = rand(1000, 9999);
+        }
+
+        a = b * quotient;
+        answer = quotient;
+      }
+
+      const symbol = operationSymbol(op);
+      const display = `${a} ${symbol} ${b}`;
+
+      return { a, b, answer, symbol, display };
+    }
+
+    function buildOptions(correct, op, diff, totalOptions){
+      const options = new Set([correct]);
+      const absCorrect = Math.abs(correct);
+
+      let spreadBase = 10;
+      if(diff === "easy") spreadBase = 10;
+      if(diff === "medium") spreadBase = 30;
+      if(diff === "hard") spreadBase = 160;
+      if(diff === "assad") spreadBase = 3000;
+
+      if(op === "mul") spreadBase = Math.max(spreadBase, Math.round(Math.max(14, absCorrect * 0.07)));
+      if(op === "div") spreadBase = Math.max(6, Math.round(Math.max(10, absCorrect * 0.12)));
+      if(op === "add" || op === "sub"){
+        spreadBase = Math.max(spreadBase, Math.round(Math.max(8, absCorrect * 0.05)));
+      }
+
+      let guard = 0;
+      while(options.size < totalOptions && guard < 900){
+        guard++;
+
+        let candidate = correct;
+        const mode = rand(1, 5);
+
+        if(mode === 1){
+          candidate = correct + rand(-spreadBase, spreadBase);
+        }else if(mode === 2){
+          candidate = correct + rand(-Math.max(3, Math.round(spreadBase * 0.35)), Math.max(3, Math.round(spreadBase * 0.35)));
+        }else if(mode === 3){
+          candidate = correct + (Math.random() < 0.5 ? -1 : 1) * rand(1, Math.max(4, Math.round(spreadBase * 0.15)));
+        }else if(mode === 4){
+          const chars = String(Math.abs(correct)).split("");
+          if(chars.length > 1){
+            const i = rand(0, chars.length - 1);
+            chars[i] = String(rand(0, 9));
+            candidate = Number((correct < 0 ? "-" : "") + chars.join(""));
+          }else{
+            candidate = correct + rand(-9, 9);
+          }
+        }else{
+          candidate = correct + (Math.random() < 0.5 ? -1 : 1) * rand(2, Math.max(5, Math.round(Math.max(10, absCorrect) * 0.03)));
+        }
+
+        if(Object.is(candidate, -0)) candidate = 0;
+        if(candidate !== correct){
+          options.add(candidate);
+        }
+      }
+
+      return shuffle([...options]).slice(0, totalOptions);
+    }
+
+    // ========= Pontuação =========
+    function calculateNormalPoints(){
+      if(game.timeExpired){
+        return 1;
+      }
+      const elapsedSec = (performance.now() - game.startAt) / 1000;
+      return Math.max(1, Math.floor(20 - (elapsedSec / 2)));
+    }
+
+    // tabela aprovada (Opção 1)
+    function getBlindTable(diff){
+      if(diff === "easy"){
+        return {
+          max: 30,
+          penalty: 10,
+          steps: [30, 24, 18, 12, 6, 0]
+        };
+      }
+      if(diff === "medium"){
+        return {
+          max: 40,
+          penalty: 15,
+          steps: [40, 32, 24, 16, 8, 0]
+        };
+      }
+      if(diff === "hard"){
+        return {
+          max: 50,
+          penalty: 20,
+          steps: [50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
+        };
+      }
+      return {
+        max: 60,
+        penalty: 20,
+        steps: [60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
+      };
+    }
+
+    function calculateBlindPointsOnCorrect(){
+      if(game.timeExpired){
+        return 0;
+      }
+
+      const elapsedSec = (performance.now() - game.startAt) / 1000;
+      const stepIndex = Math.floor(elapsedSec / 5);
+      const table = getBlindTable(game.difficulty);
+
+      if(stepIndex >= table.steps.length){
+        return 0;
+      }
+      return table.steps[stepIndex];
+    }
+
+    function getBlindPenaltyOnWrong(){
+      return getBlindTable(game.difficulty).penalty;
+    }
+
+    // ========= Render / Estado de jogo =========
+    function updateInfoPanels(){
+      pointsValue.textContent = game.points;
+      difficultyLabel.textContent = "Dificuldade: " + difficultyLabelPT(game.difficulty);
+      currentOpLabel.textContent = "Operação: " + operationLabel(game.operation);
+      modeLabel.textContent = "Modo: " + modeToText(game.mode);
+      correctValue.textContent = game.correct;
+      wrongValue.textContent = game.wrong;
+      roundValue.textContent = game.answeredRounds;
+      roundMaxLabel.textContent = game.mode === "endless" ? "/ ∞" : `/ ${game.targetRounds}`;
+
+      blindPointsValue.textContent = game.points;
+      blindDifficultyText.textContent = difficultyLabelPT(game.difficulty);
+      blindCorrectValue.textContent = game.correct;
+      blindWrongValue.textContent = game.wrong;
+    }
+
+    function resetGameState(){
+      stopTimer();
+
+      game.points = 0;
+      game.correct = 0;
+      game.wrong = 0;
+      game.answeredRounds = 0;
+      game.targetRounds = getRoundsTarget(game.mode);
+
+      game.timeExpired = false;
+      game.roundLocked = false;
+      game.currentQuestion = null;
+      game.currentOptions = [];
+      game.blindCountdownDone = false;
+      game.inRevealPhase = false;
+
+      roundValue.textContent = "0";
+      roundTip.textContent = "Responda antes do tempo acabar para ganhar mais pontos.";
+
+      answersEl.innerHTML = "";
+      blindAnswersGrid.innerHTML = "";
+      blindAnswersShell.classList.remove("show");
+
+      timerFill.classList.remove("expired");
+      timerFill.style.width = "100%";
+      timerFill.style.transform = "scaleX(1)";
+
+      updateInfoPanels();
+    }
+
+    function prepareGameLayout(){
+      const blind = game.blindfolded;
+
+      gameWrap.classList.toggle("blind-theme", blind);
+      gameWrap.classList.toggle("normal-theme", !blind);
+
+      normalGameLayout.style.display = blind ? "none" : "grid";
+      blindLayout.classList.toggle("active", blind);
+
+      timerShell.classList.toggle("blind", blind);
+      timerFill.classList.toggle("blind", blind);
+
+      updateBodyThemeByScreen();
+    }
+
+    function startGame(){
+      resetGameState();
+      prepareGameLayout();
+      setScreen("game");
+      updateBodyThemeByScreen();
+
+      if(game.blindfolded){
+        runBlindCountdownThenFirstRound();
+      }else{
+        newRoundNormal();
+      }
+    }
+
+    // ========= Normal game =========
+    function newRoundNormal(){
+      game.roundLocked = false;
+      game.currentQuestion = buildProblem();
+      game.currentOptions = buildOptions(
+        game.currentQuestion.answer,
+        game.operation,
+        game.difficulty,
+        6
+      );
+
+      operationDisplay.textContent = game.currentQuestion.display;
+      renderNormalAnswers(game.currentOptions, game.currentQuestion.answer);
+
+      startTimer();
+      roundTip.textContent = "Responda antes do tempo acabar para ganhar mais pontos.";
+      updateInfoPanels();
+    }
+
+    function renderNormalAnswers(options, correct){
+      answersEl.innerHTML = "";
+
+      options.forEach(value => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "answer";
+        btn.textContent = value;
+        btn.dataset.value = value;
+
+        btn.addEventListener("click", () => handleNormalAnswer(btn, value, correct));
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function handleNormalAnswer(buttonEl, value, correct){
+      if(game.roundLocked) return;
+      game.roundLocked = true;
+      stopTimer();
+
+      const allButtons = [...answersEl.querySelectorAll(".answer")];
+      const isCorrect = value === correct;
+
+      if(isCorrect){
+        const gained = calculateNormalPoints();
+        game.points += gained;
+        game.correct += 1;
+
+        pointsValue.textContent = game.points;
+        correctValue.textContent = game.correct;
+        buttonEl.classList.add("correct");
+        bump(correctStat);
+
+        if(game.timeExpired){
+          roundTip.textContent = "Correto! +1 ponto porque o tempo já havia acabado.";
+        }else{
+          roundTip.textContent = `Correto! +${gained} pontos.`;
+        }
+      }else{
+        game.wrong += 1;
+        wrongValue.textContent = game.wrong;
+        buttonEl.classList.add("wrong");
+        bump(wrongStat);
+
+        const correctBtn = allButtons.find(btn => Number(btn.dataset.value) === correct);
+        if(correctBtn){
+          correctBtn.classList.add("reveal");
+        }
+
+        roundTip.textContent = `Resposta incorreta. A resposta correta era ${correct}.`;
+      }
+
+      game.answeredRounds += 1;
+      updateInfoPanels();
+
+      setTimeout(() => {
+        if(shouldFinishGame()){
+          goToResults();
+        }else{
+          newRoundNormal();
+        }
+      }, 540);
+    }
+
+    // ========= Blindfold game =========
+    async function runBlindCountdownThenFirstRound(){
+      game.blindCountdownDone = true;
+      await runCountdown();
+      if(body.dataset.screen !== "game" || !game.blindfolded) return;
+      newRoundBlind();
+    }
+
+    function wait(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function runCountdown(){
+      const token = ++roundSequenceToken;
+      const nums = ["3", "2", "1"];
+
+      for(const n of nums){
+        if(token !== roundSequenceToken) return;
+        blindCountdown.textContent = n;
+        blindCountdown.classList.remove("show");
+        void blindCountdown.offsetWidth;
+        blindCountdown.classList.add("show");
+        await wait(900);
+      }
+      blindCountdown.classList.remove("show");
+    }
+
+    async function newRoundBlind(){
+      game.roundLocked = true;
+      game.inRevealPhase = true;
+      blindAnswersShell.classList.remove("show");
+      blindAnswersGrid.innerHTML = "";
+
+      const token = ++roundSequenceToken;
+      const q = buildProblem();
+      game.currentQuestion = q;
+      game.currentOptions = buildOptions(q.answer, game.operation, game.difficulty, 4);
+      updateInfoPanels();
+
+      blindRevealCard.classList.remove("close");
+      blindRevealCard.classList.add("open");
+      blindRevealValue.classList.remove("show");
+      blindRevealValue.textContent = "";
+
+      await wait(540);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      // número 1
+      blindRevealValue.textContent = q.a;
+      blindRevealValue.classList.add("show");
+      await wait(1500);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      blindRevealValue.classList.remove("show");
+      await wait(220);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      // operador (1s)
+      blindRevealValue.textContent = q.symbol;
+      blindRevealValue.classList.add("show");
+      await wait(1000);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      blindRevealValue.classList.remove("show");
+      await wait(220);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      // número 2
+      blindRevealValue.textContent = q.b;
+      blindRevealValue.classList.add("show");
+      await wait(1500);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      blindRevealValue.classList.remove("show");
+      await wait(220);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      // retrair painel
+      blindRevealCard.classList.remove("open");
+      blindRevealCard.classList.add("close");
+      await wait(420);
+      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
+
+      renderBlindAnswers(game.currentOptions, q.answer);
+      blindAnswersShell.classList.add("show");
+
+      game.roundLocked = false;
+      game.inRevealPhase = false;
+      startTimer();
+    }
+
+    function renderBlindAnswers(options, correct){
+      blindAnswersGrid.innerHTML = "";
+
+      options.forEach(value => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "blind-answer";
+        btn.textContent = value;
+        btn.dataset.value = value;
+
+        btn.addEventListener("click", () => handleBlindAnswer(btn, value, correct));
+        blindAnswersGrid.appendChild(btn);
+      });
+    }
+
+    function handleBlindAnswer(buttonEl, value, correct){
+      if(game.roundLocked || game.inRevealPhase) return;
+      game.roundLocked = true;
+      stopTimer();
+
+      const allButtons = [...blindAnswersGrid.querySelectorAll(".blind-answer")];
+      const isCorrect = value === correct;
+
+      if(isCorrect){
+        const gained = calculateBlindPointsOnCorrect();
+        game.points += gained;
+        game.correct += 1;
+        buttonEl.classList.add("correct");
+      }else{
+        const penalty = getBlindPenaltyOnWrong();
+        game.points -= penalty;
+        game.wrong += 1;
+        buttonEl.classList.add("wrong");
+
+        const correctBtn = allButtons.find(btn => Number(btn.dataset.value) === correct);
+        if(correctBtn){
+          correctBtn.classList.add("correct");
+        }
+      }
+
+      game.answeredRounds += 1;
+      updateInfoPanels();
+
+      setTimeout(() => {
+        if(shouldFinishGame()){
+          goToResults();
+        }else{
+          newRoundBlind();
+        }
+      }, 620);
+    }
+
+    function shouldFinishGame(){
+      if(game.mode === "endless"){
+        return false;
+      }
+      return game.answeredRounds >= game.targetRounds;
+    }
+
+    function goToResults(){
+      stopTimer();
+      roundSequenceToken++;
+      fillResults();
+      setScreen("results");
+      body.classList.remove("theme-blind");
+    }
+
+    function animateCounter(obj, start, end, duration) {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const easeOutCirc = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+        obj.innerHTML = Math.floor(easeOutCirc(progress) * (end - start) + start);
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        } else {
+          obj.innerHTML = end; // ensure precise final value
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+
+    function fillResults(){
+      resultScore.textContent = "0";
+      setTimeout(() => {
+        animateCounter(resultScore, 0, game.points, 1400);
+      }, 400); // Wait for transition
+
+      resultMode.textContent = game.blindfolded
+        ? `Modo Cego • ${modeToText(game.mode)}`
+        : `Normal • ${modeToText(game.mode)}`;
+
+      resultMeta.textContent = `${operationLabel(game.operation)} - ${difficultyLabelPT(game.difficulty)}`;
+      cwCorrect.textContent = game.correct;
+      cwWrong.textContent = game.wrong;
+    }
+
+    // ========= Eye tracking =========
+    function updateEyeToPointer(clientX, clientY){
+      if(game.blindfolded || body.dataset.screen !== "mode") return;
+
+      const svg = blindToggle.querySelector(".eye-svg");
+      const rect = svg.getBoundingClientRect();
+
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      const dx = clientX - cx;
+      const dy = clientY - cy;
+
+      const angle = Math.atan2(dy, dx);
+      const maxRadius = 4.4;
+
+      const dist = Math.min(maxRadius, Math.hypot(dx, dy) / 18);
+      const px = Math.cos(angle) * dist;
+      const py = Math.sin(angle) * dist;
+
+      eyePupil.style.transform = `translate(${px}px, ${py}px)`;
+    }
+
+    function resetEyePosition(){
+      eyePupil.style.transform = "translate(0px, 0px)";
+    }
+
+    document.addEventListener("mousemove", (e) => {
+      updateEyeToPointer(e.clientX, e.clientY);
+    });
+
+    document.addEventListener("mouseleave", () => {
+      if(!game.blindfolded){
+        resetEyePosition();
+      }
+    });
+
+    blindToggle.addEventListener("click", () => {
+      game.blindfolded = !game.blindfolded;
+      blindToggle.classList.toggle("active", game.blindfolded);
+
+      if(game.blindfolded){
+        resetEyePosition();
+      }
+
+      setBlindTheme(game.blindfolded);
+      updateBodyThemeByScreen();
+    });
+
+    // ========= Navegação =========
+    startBtn.addEventListener("click", () => {
+      if(navigationLocked) return;
+      body.classList.remove("theme-blind");
+      setScreen("menu");
+    });
+
+    opCards.forEach(card => {
+      card.addEventListener("click", () => {
+        if(navigationLocked) return;
+        navigationLocked = true;
+
+        game.operation = card.dataset.op;
+        animateOutMenu();
+
+        setTimeout(() => {
+          setScreen("difficulty");
+          navigationLocked = false;
+        }, 1220);
+      });
+    });
+
+    diffCards.forEach(card => {
+      card.addEventListener("click", () => {
+        if(navigationLocked) return;
+        game.difficulty = card.dataset.diff;
+        setScreen("mode");
+        setBlindTheme(game.blindfolded);
+        updateBodyThemeByScreen();
+      });
+    });
+
+    modeCards.forEach(card => {
+      card.addEventListener("click", () => {
+        if(navigationLocked) return;
+        game.mode = card.dataset.mode;
+        startGame();
+      });
+    });
+
+    backToMenuFromDifficulty.addEventListener("click", () => {
+      if(navigationLocked) return;
+      setScreen("menu");
+      updateBodyThemeByScreen();
+    });
+
+    backToDifficultyFromMode.addEventListener("click", () => {
+      if(navigationLocked) return;
+      setScreen("difficulty");
+      updateBodyThemeByScreen();
+    });
+
+    returnToResultsNormal.addEventListener("click", () => {
+      goToResults();
+    });
+
+    returnToResultsBlind.addEventListener("click", () => {
+      goToResults();
+    });
+
+    playAgainBtn.addEventListener("click", () => {
+      setScreen("mode");
+      setBlindTheme(game.blindfolded);
+      updateBodyThemeByScreen();
+    });
+
+    backHomeBtn.addEventListener("click", () => {
+      stopTimer();
+      roundSequenceToken++;
+      game.blindfolded = false;
+      blindToggle.classList.remove("active");
+      setBlindTheme(false);
+      setScreen("home");
+      body.classList.remove("theme-blind");
+    });
+
+    // ========= Teclado =========
+    function clickOnEnter(el){
+      el.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          el.click();
+        }
+      });
+    }
+
+    [
+      startBtn,
+      backToMenuFromDifficulty,
+      backToDifficultyFromMode,
+      blindToggle,
+      returnToResultsNormal,
+      returnToResultsBlind,
+      playAgainBtn,
+      backHomeBtn
+    ].forEach(clickOnEnter);
+
+    opCards.forEach(clickOnEnter);
+    diffCards.forEach(clickOnEnter);
+    modeCards.forEach(clickOnEnter);
+
+    // ========= Estado inicial =========
+    setBlindTheme(false);
+    setScreen("home");
+    updateBodyThemeByScreen();
+  </script>
+</body>
+</html>
