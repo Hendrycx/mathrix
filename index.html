@@ -39,22 +39,22 @@
     <div class="menu-wrap">
       <div class="grid">
 
-        <button class="card menuCard op" type="button" data-op="add" style="--d: 80ms;">
+        <button class="card menuCard op" type="button" data-op="add" style="--d: 0ms;">
           <div class="symbol">+</div>
           <div class="label">Adição</div>
         </button>
 
-        <button class="card menuCard op" type="button" data-op="sub" style="--d: 140ms;">
+        <button class="card menuCard op" type="button" data-op="sub" style="--d: 40ms;">
           <div class="symbol">−</div>
           <div class="label">Subtração</div>
         </button>
 
-        <button class="card menuCard op" type="button" data-op="mul" style="--d: 200ms;">
+        <button class="card menuCard op" type="button" data-op="mul" style="--d: 80ms;">
           <div class="symbol">×</div>
           <div class="label">Multiplicação</div>
         </button>
 
-        <button class="card menuCard op" type="button" data-op="div" style="--d: 260ms;">
+        <button class="card menuCard op" type="button" data-op="div" style="--d: 120ms;">
           <div class="symbol">÷</div>
           <div class="label">Divisão</div>
         </button>
@@ -72,28 +72,28 @@
       <div class="section-title">Selecione o nível de dificuldade</div>
 
       <div class="selection-grid" id="difficultyGrid">
-        <button class="select-card diff-card" type="button" data-diff="easy" style="--d: 120ms;">
+        <button class="select-card diff-card" type="button" data-diff="easy" style="--d: 0ms;">
           <div class="select-icon">⭐</div>
           <div class="select-label">Fácil</div>
           <div class="select-desc">Números 1–34</div>
         </button>
 
-        <button class="select-card diff-card" type="button" data-diff="medium" style="--d: 220ms;">
+        <button class="select-card diff-card" type="button" data-diff="medium" style="--d: 35ms;">
           <div class="select-icon">⭐⭐</div>
           <div class="select-label">Médio</div>
-          <div class="select-desc">Números 36–99</div>
+          <div class="select-desc">Números 35–99</div>
         </button>
 
-        <button class="select-card diff-card" type="button" data-diff="hard" style="--d: 320ms;">
+        <button class="select-card diff-card" type="button" data-diff="hard" style="--d: 70ms;">
           <div class="select-icon">⭐⭐⭐</div>
           <div class="select-label">Difícil</div>
           <div class="select-desc">Números 100–999</div>
         </button>
 
-        <button class="select-card diff-card" type="button" data-diff="assad" style="--d: 420ms;">
+        <button class="select-card diff-card" type="button" data-diff="assad" style="--d: 105ms;">
           <div class="select-icon">💀</div>
           <div class="select-label">Impossível</div>
-          <div class="select-desc">Números até 999.999</div>
+          <div class="select-desc">Números 1.000–999.999</div>
         </button>
       </div>
     </div>
@@ -109,37 +109,24 @@
       <div class="section-title">Selecione a quantidade de rodadas</div>
 
       <div class="selection-grid" id="modeGrid">
-        <button class="select-card mode-card" type="button" data-mode="5" style="--d: 120ms;">
+        <button class="select-card mode-card" type="button" data-mode="5" style="--d: 0ms;">
           <div class="round-badge">~2 min</div>
           <div class="select-label">5</div>
         </button>
 
-        <button class="select-card mode-card" type="button" data-mode="10" style="--d: 220ms;">
+        <button class="select-card mode-card" type="button" data-mode="10" style="--d: 35ms;">
           <div class="round-badge">~4 min</div>
           <div class="select-label">10</div>
         </button>
 
-        <button class="select-card mode-card" type="button" data-mode="20" style="--d: 320ms;">
+        <button class="select-card mode-card" type="button" data-mode="20" style="--d: 70ms;">
           <div class="round-badge">~8 min</div>
           <div class="select-label">20</div>
         </button>
 
-        <button class="select-card mode-card endless-card" type="button" data-mode="endless" style="--d: 420ms;">
+        <button class="select-card mode-card endless-card" type="button" data-mode="endless" style="--d: 105ms;">
           <div class="round-badge">∞</div>
           <div class="select-label endless-label">∞</div>
-        </button>
-      </div>
-
-      <div class="mode-bottom">
-        <button class="blind-toggle" id="blindToggle" type="button" aria-label="Alternar modo cego">
-          <div class="eye-box">
-            <svg class="eye-svg" viewBox="0 0 60 36" aria-hidden="true">
-              <path class="eye-outline" d="M5 18C10.5 10.5 18 6 30 6c12 0 19.5 4.5 25 12-5.5 7.5-13 12-25 12C18 30 10.5 25.5 5 18Z"></path>
-              <circle class="eye-pupil" id="eyePupil" cx="30" cy="18" r="5.2"></circle>
-              <line class="eye-slash" x1="12" y1="29" x2="48" y2="7"></line>
-            </svg>
-          </div>
-          <div class="blind-text">Modo Cego</div>
         </button>
       </div>
     </div>
@@ -147,11 +134,6 @@
 
   <!-- GAME -->
   <section id="game" class="screen" aria-label="Tela do jogo">
-    <!-- NOVO: Countdown universal -->
-    <div class="game-countdown-overlay" id="gameCountdownOverlay" aria-hidden="true">
-      <div class="game-countdown-number" id="gameCountdownNumber">3</div>
-    </div>
-
     <div class="game-wrap normal-theme" id="gameWrap">
 
       <!-- Timer -->
@@ -178,11 +160,6 @@
 
         <!-- Centro -->
         <main class="center-area">
-          <div class="blind-reveal-overlay" id="blindRevealOverlay">
-            <div class="blind-reveal-card" id="blindRevealCard">
-              <div class="blind-reveal-value" id="blindRevealValue">12</div>
-            </div>
-          </div>
           <div class="operation" id="operationDisplay">12 + 8</div>
           <div class="answers" id="answers"></div>
           <div class="round-tip" id="roundTip">⏱️ Responda antes do tempo acabar para ganhar mais pontos.</div>
@@ -203,9 +180,6 @@
           </div>
         </aside>
       </div>
-
-      <!-- GAME BLINDFOLD (removido, unificado com o normal) -->
-
     </div>
   </section>
 
@@ -280,10 +254,6 @@
     const backToMenuFromDifficulty = document.getElementById("backToMenuFromDifficulty");
     const backToDifficultyFromMode = document.getElementById("backToDifficultyFromMode");
 
-    const modeScreen = document.getElementById("mode");
-    const blindToggle = document.getElementById("blindToggle");
-    const eyePupil = document.getElementById("eyePupil");
-
     // normal game
     const gameWrap = document.getElementById("gameWrap");
     const timerShell = document.getElementById("timerShell");
@@ -307,13 +277,6 @@
     const wrongStat = document.getElementById("wrongStat");
     const returnToResultsNormal = document.getElementById("returnToResultsNormal");
 
-    // blind game
-    const blindRevealCard = document.getElementById("blindRevealCard");
-    const blindRevealValue = document.getElementById("blindRevealValue");
-
-    const gameCountdownOverlay = document.getElementById("gameCountdownOverlay");
-    const gameCountdownNumber  = document.getElementById("gameCountdownNumber");
-
     // results
     const resultScore = document.getElementById("resultScore");
     const resultMode = document.getElementById("resultMode");
@@ -325,13 +288,11 @@
 
     // ========= Estado =========
     let navigationLocked = false;
-    let roundSequenceToken = 0;
 
     const game = {
       operation: "add",
       difficulty: "easy",
       mode: "5",              // 5, 10, 20, endless
-      blindfolded: false,
 
       points: 0,
       correct: 0,
@@ -347,10 +308,7 @@
       roundLocked: false,
 
       currentQuestion: null,
-      currentOptions: [],
-
-      blindCountdownDone: false,
-      inRevealPhase: false
+      currentOptions: []
     };
 
     // ========= Utilidades =========
@@ -440,20 +398,6 @@
       return value === "endless" ? "Infinito" : value;
     }
 
-    function setBlindTheme(active){
-      modeScreen.classList.toggle("mode-blind", active);
-
-      if(body.dataset.screen === "mode"){
-        body.classList.toggle("theme-blind", active);
-      }
-    }
-
-    function updateBodyThemeByScreen(){
-      const shouldBlind = (body.dataset.screen === "mode" && game.blindfolded) ||
-                          (body.dataset.screen === "game" && game.blindfolded);
-      body.classList.toggle("theme-blind", shouldBlind);
-    }
-
     function getRoundsTarget(mode){
       if(mode === "endless") return Infinity;
       return Number(mode);
@@ -467,14 +411,7 @@
     }
 
     function getTimeLimitMs(){
-      if(!game.blindfolded){
-        return 20000;
-      }
-
-      if(game.difficulty === "easy") return 30000;
-      if(game.difficulty === "medium") return 30000;
-      if(game.difficulty === "hard") return 50000;
-      return 60000; // assad
+      return 20000;
     }
 
     function startTimer(){
@@ -485,34 +422,22 @@
       game.endAt = game.startAt + game.timeLimitMs;
 
       timerFill.classList.remove("expired");
-      if(game.blindfolded){
-        timerFill.style.transform = "scaleX(1)";
-      }else{
-        timerFill.style.width = "100%";
-      }
+      timerFill.style.width = "100%";
 
       const tick = (now) => {
         const remaining = Math.max(0, game.endAt - now);
         const percent = remaining / game.timeLimitMs;
 
-        if(game.blindfolded){
-          timerFill.style.transform = `scaleX(${percent})`;
-        }else{
-          timerFill.style.width = (percent * 100) + "%";
-          const hue = percent * 120; // 0=vermelho, 120=verde
-          timerFill.style.background = `hsl(${hue}, 70%, 45%)`;
-        }
+        timerFill.style.width = (percent * 100) + "%";
+        const hue = percent * 120; // 0=vermelho, 120=verde
+        timerFill.style.background = `hsl(${hue}, 70%, 45%)`;
 
         if(remaining <= 0){
           game.timeExpired = true;
           timerFill.classList.add("expired");
           game.rafId = null;
 
-          if(game.blindfolded){
-            roundTip.textContent = "";
-          }else{
-            roundTip.textContent = "⏰ O tempo acabou. Você ainda pode responder, mas uma resposta correta valerá apenas 1 ponto.";
-          }
+          roundTip.textContent = "⏰ O tempo acabou. Você ainda pode responder, mas uma resposta correta valerá apenas 1 ponto.";
           return;
         }
 
@@ -525,7 +450,7 @@
     function getDifficultyRange(diff){
       switch(diff){
         case "easy":   return [1, 34];
-        case "medium": return [36, 99];
+        case "medium": return [35, 99];
         case "hard":   return [100, 999];
         case "assad":  return [1000, 999999];
         default:       return [1, 34];
@@ -540,6 +465,25 @@
         case "assad":  return [60, 110];
         default:       return [1, 10];
       }
+    }
+
+    function formatRangeNumber(value){
+      return value.toLocaleString("pt-BR");
+    }
+
+    function getRangeForDifficultyCard(diff){
+      if(game.operation === "mul" || game.operation === "div"){
+        return getMulDivRange(diff);
+      }
+      return getDifficultyRange(diff);
+    }
+
+    function updateDifficultyCards(){
+      diffCards.forEach(card => {
+        const desc = card.querySelector(".select-desc");
+        const [min, max] = getRangeForDifficultyCard(card.dataset.diff);
+        desc.textContent = `Números ${formatRangeNumber(min)}–${formatRangeNumber(max)}`;
+      });
     }
 
     function randomByDifficulty(diff = game.difficulty){
@@ -655,55 +599,6 @@
       return Math.max(1, Math.floor(20 - (elapsedSec / 2)));
     }
 
-    // tabela aprovada (Opção 1)
-    function getBlindTable(diff){
-      if(diff === "easy"){
-        return {
-          max: 30,
-          penalty: 10,
-          steps: [30, 24, 18, 12, 6, 0]
-        };
-      }
-      if(diff === "medium"){
-        return {
-          max: 40,
-          penalty: 15,
-          steps: [40, 32, 24, 16, 8, 0]
-        };
-      }
-      if(diff === "hard"){
-        return {
-          max: 50,
-          penalty: 20,
-          steps: [50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
-        };
-      }
-      return {
-        max: 60,
-        penalty: 20,
-        steps: [60, 55, 50, 45, 40, 35, 30, 25, 20, 15, 10, 5, 0]
-      };
-    }
-
-    function calculateBlindPointsOnCorrect(){
-      if(game.timeExpired){
-        return 0;
-      }
-
-      const elapsedSec = (performance.now() - game.startAt) / 1000;
-      const stepIndex = Math.floor(elapsedSec / 5);
-      const table = getBlindTable(game.difficulty);
-
-      if(stepIndex >= table.steps.length){
-        return 0;
-      }
-      return table.steps[stepIndex];
-    }
-
-    function getBlindPenaltyOnWrong(){
-      return getBlindTable(game.difficulty).penalty;
-    }
-
     // ========= Render / Estado de jogo =========
     function updateInfoPanels(){
       const scoreColor = game.points < 0 ? "#ff6b6b" : "";
@@ -731,8 +626,6 @@
       game.roundLocked = false;
       game.currentQuestion = null;
       game.currentOptions = [];
-      game.blindCountdownDone = false;
-      game.inRevealPhase = false;
 
       roundValue.textContent = "0";
       roundTip.textContent = "⏱️ Responda antes do tempo acabar para ganhar mais pontos.";
@@ -747,51 +640,16 @@
     }
 
     function prepareGameLayout(){
-      const blind = game.blindfolded;
-
-      gameWrap.classList.toggle("blind-theme", blind);
-      gameWrap.classList.toggle("normal-theme", !blind);
-
+      gameWrap.classList.add("normal-theme");
       normalGameLayout.style.display = "grid";
-
-      timerShell.classList.toggle("blind", blind);
-      timerFill.classList.toggle("blind", blind);
-
-      answersEl.style.gridTemplateColumns = blind
-        ? "repeat(2, minmax(0,1fr))"
-        : "repeat(3, minmax(0,1fr))";
-
-      updateBodyThemeByScreen();
+      answersEl.style.gridTemplateColumns = "repeat(3, minmax(0,1fr))";
     }
 
-    async function runUniversalCountdown() {
-      gameCountdownOverlay.classList.add("active");
-
-      for (const n of ["3", "2", "1"]) {
-        gameCountdownNumber.textContent = n;
-        gameCountdownNumber.classList.remove("pop");
-        void gameCountdownNumber.offsetWidth; // reflow para reiniciar animação
-        gameCountdownNumber.classList.add("pop");
-        await wait(860);
-      }
-
-      gameCountdownNumber.classList.remove("pop");
-      gameCountdownOverlay.classList.remove("active");
-    }
-
-    async function startGame(){
+    function startGame(){
       resetGameState();
       prepareGameLayout();
       setScreen("game");
-      updateBodyThemeByScreen();
-
-      await runUniversalCountdown();
-
-      if(game.blindfolded){
-        newRoundBlind();
-      }else{
-        newRoundNormal();
-      }
+      newRoundNormal();
     }
 
     // ========= Normal game =========
@@ -839,12 +697,7 @@
       const isCorrect = value === correct;
 
       if(isCorrect){
-        let gained;
-        if(game.blindfolded){
-          gained = calculateBlindPointsOnCorrect();
-        } else {
-          gained = calculateNormalPoints();
-        }
+        const gained = calculateNormalPoints();
         game.points += gained;
         game.correct += 1;
 
@@ -854,18 +707,12 @@
         buttonEl.textContent = "✅ " + value;
         bump(correctStat);
 
-        if(game.blindfolded){
-          roundTip.textContent = gained > 0 ? `✅ Correto! +${gained} pontos.` : "✅ Correto! Mas o tempo já havia acabado.";
-        } else if(game.timeExpired){
+        if(game.timeExpired){
           roundTip.textContent = "✅ Correto! +1 ponto porque o tempo já havia acabado.";
         }else{
           roundTip.textContent = `✅ Correto! +${gained} pontos.`;
         }
       }else{
-        if(game.blindfolded){
-          const penalty = getBlindPenaltyOnWrong();
-          game.points -= penalty;
-        }
         game.wrong += 1;
         wrongValue.textContent = game.wrong;
         buttonEl.classList.add("wrong");
@@ -888,88 +735,9 @@
         if(shouldFinishGame()){
           goToResults();
         }else{
-          game.blindfolded ? newRoundBlind() : newRoundNormal();
+          newRoundNormal();
         }
-      }, 540);
-    }
-
-    // ========= Blindfold game =========
-    function wait(ms){
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function newRoundBlind(){
-      game.roundLocked = true;
-      game.inRevealPhase = true;
-
-      answersEl.innerHTML = "";
-      answersEl.style.opacity = "0";
-      operationDisplay.classList.remove("show-question");
-
-      const overlay = document.getElementById("blindRevealOverlay");
-      overlay.classList.add("active");
-
-      const token = ++roundSequenceToken;
-      const q = buildProblem();
-      game.currentQuestion = q;
-      game.currentOptions = buildOptions(q.answer, game.operation, game.difficulty, 4);
-      updateInfoPanels();
-
-      blindRevealCard.classList.remove("close");
-      blindRevealCard.classList.add("open");
-      blindRevealValue.classList.remove("show");
-      blindRevealValue.textContent = "";
-
-      await wait(480);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      // número 1
-      blindRevealValue.textContent = q.a;
-      blindRevealValue.classList.add("show");
-      await wait(1400);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      blindRevealValue.classList.remove("show");
-      await wait(200);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      // operador
-      blindRevealValue.textContent = q.symbol;
-      blindRevealValue.classList.add("show");
-      await wait(1000);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      blindRevealValue.classList.remove("show");
-      await wait(200);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      // número 2
-      blindRevealValue.textContent = q.b;
-      blindRevealValue.classList.add("show");
-      await wait(1400);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      blindRevealValue.classList.remove("show");
-      await wait(200);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      // retrair painel
-      blindRevealCard.classList.remove("open");
-      blindRevealCard.classList.add("close");
-      await wait(400);
-      if(token !== roundSequenceToken || body.dataset.screen !== "game") return;
-
-      overlay.classList.remove("active");
-
-      operationDisplay.textContent = `${q.a} ${q.symbol} ?`;
-      operationDisplay.classList.add("show-question");
-
-      renderNormalAnswers(game.currentOptions, q.answer);
-      answersEl.style.opacity = "1";
-
-      game.roundLocked = false;
-      game.inRevealPhase = false;
-      startTimer();
+      }, 260);
     }
 
     function shouldFinishGame(){
@@ -981,10 +749,8 @@
 
     function goToResults(){
       stopTimer();
-      roundSequenceToken++;
       fillResults();
       setScreen("results");
-      body.classList.remove("theme-blind");
     }
 
     function animateCounter(obj, start, end, duration) {
@@ -1024,9 +790,7 @@
         animateCounter(resultScore, 0, game.points, 1400);
       }, 400); // Wait for transition
 
-      resultMode.textContent = game.blindfolded
-        ? `Modo Cego • ${modeToText(game.mode)}`
-        : `Normal • ${modeToText(game.mode)}`;
+      resultMode.textContent = `Normal • ${modeToText(game.mode)}`;
 
       resultMeta.textContent = `${operationLabel(game.operation)} - ${difficultyLabelPT(game.difficulty)}`;
       cwCorrect.textContent = game.correct;
@@ -1058,7 +822,10 @@
       const symbols = [
         "+", "−", "×", "÷", "=", "π", "∑", "√",
         "7", "3", "9", "2", "5", "8", "1", "6",
-        "%", "!", "∞", "≠", "²", "³"
+        "%", "!", "∞", "≠", "²", "³", "∆", "≈",
+        "≤", "≥", "∫", "θ", "x", "y", "10", "12",
+        "45", "90", "()", "[]", "∴", "∵", "log", "φ",
+        "α", "β", "μ", "λ", "∠", "⊕"
       ];
 
       const safeZones = [
@@ -1095,37 +862,6 @@
       });
     }
 
-    // ========= Eye tracking =========
-    function updateEyeToPointer(clientX, clientY){
-      if(game.blindfolded || body.dataset.screen !== "mode") return;
-
-      const svg = blindToggle.querySelector(".eye-svg");
-      const rect = svg.getBoundingClientRect();
-
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-
-      const dx = clientX - cx;
-      const dy = clientY - cy;
-
-      const angle = Math.atan2(dy, dx);
-      const maxRadius = 4.4;
-
-      const dist = Math.min(maxRadius, Math.hypot(dx, dy) / 18);
-      const px = Math.cos(angle) * dist;
-      const py = Math.sin(angle) * dist;
-
-      eyePupil.style.transform = `translate(${px}px, ${py}px)`;
-    }
-
-    function resetEyePosition(){
-      eyePupil.style.transform = "translate(0px, 0px)";
-    }
-
-    document.addEventListener("mousemove", (e) => {
-      updateEyeToPointer(e.clientX, e.clientY);
-    });
-
     let footerParallaxOffset = 0;
 
     document.addEventListener("wheel", (e) => {
@@ -1144,28 +880,9 @@
       }, 1200);
     }, { passive: true });
 
-    document.addEventListener("mouseleave", () => {
-      if(!game.blindfolded){
-        resetEyePosition();
-      }
-    });
-
-    blindToggle.addEventListener("click", () => {
-      game.blindfolded = !game.blindfolded;
-      blindToggle.classList.toggle("active", game.blindfolded);
-
-      if(game.blindfolded){
-        resetEyePosition();
-      }
-
-      setBlindTheme(game.blindfolded);
-      updateBodyThemeByScreen();
-    });
-
     // ========= Navegação =========
     startBtn.addEventListener("click", () => {
       if(navigationLocked) return;
-      body.classList.remove("theme-blind");
       setScreen("menu");
     });
 
@@ -1175,12 +892,13 @@
         navigationLocked = true;
 
         game.operation = card.dataset.op;
+        updateDifficultyCards();
         animateOutMenu();
 
         setTimeout(() => {
           setScreen("difficulty");
           navigationLocked = false;
-        }, 1220);
+        }, 122);
       });
     });
 
@@ -1189,8 +907,6 @@
         if(navigationLocked) return;
         game.difficulty = card.dataset.diff;
         setScreen("mode");
-        setBlindTheme(game.blindfolded);
-        updateBodyThemeByScreen();
       });
     });
 
@@ -1205,13 +921,12 @@
     backToMenuFromDifficulty.addEventListener("click", () => {
       navigationLocked = false;
       setScreen("menu");
-      updateBodyThemeByScreen();
     });
 
     backToDifficultyFromMode.addEventListener("click", () => {
       navigationLocked = false;
+      updateDifficultyCards();
       setScreen("difficulty");
-      updateBodyThemeByScreen();
     });
 
     returnToResultsNormal.addEventListener("click", () => {
@@ -1220,18 +935,11 @@
 
     playAgainBtn.addEventListener("click", () => {
       setScreen("mode");
-      setBlindTheme(game.blindfolded);
-      updateBodyThemeByScreen();
     });
 
     backHomeBtn.addEventListener("click", () => {
       stopTimer();
-      roundSequenceToken++;
-      game.blindfolded = false;
-      blindToggle.classList.remove("active");
-      setBlindTheme(false);
       setScreen("home");
-      body.classList.remove("theme-blind");
     });
 
     // ========= Teclado =========
@@ -1248,7 +956,6 @@
       startBtn,
       backToMenuFromDifficulty,
       backToDifficultyFromMode,
-      blindToggle,
       returnToResultsNormal,
       playAgainBtn,
       backHomeBtn
@@ -1259,9 +966,8 @@
     modeCards.forEach(clickOnEnter);
 
     // ========= Estado inicial =========
-    setBlindTheme(false);
+    updateDifficultyCards();
     setScreen("home");
-    updateBodyThemeByScreen();
   </script>
 </body>
 </html>
