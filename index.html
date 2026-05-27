@@ -7,6 +7,17 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;700;800&family=Jeju+Hallasan&family=Licorice&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>
+    // =====================================================
+    // CONFIGURAR ANTES DE USAR
+    const SUPABASE_URL      = "https://qbaagtfkoljydenyvhya.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFiYWFndGZrb2xqeWRlbnl2aHlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MzU2OTksImV4cCI6MjA5NTQxMTY5OX0.5Eiz-yenX0UUr-QGEvhMV16gKTxOOzaS__ULP9wWXSY";
+    // =====================================================
+    const _supabase = window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+  </script>
 </head>
 <body data-screen="home">
 
@@ -14,9 +25,44 @@
   <header class="topbar" aria-hidden="true">
     <h2>MATHRIX</h2>
   </header>
+  <button class="ranking-toggle-btn" id="rankingToggleBtn" aria-label="Abrir ranking" aria-expanded="false">
+    &#8250;
+  </button>
+
+  <aside class="ranking-panel" id="rankingPanel" aria-label="Ranking" aria-hidden="true">
+    <div class="ranking-header">
+      <span class="ranking-title">Ranking</span>
+      <button class="ranking-close-btn" id="rankingCloseBtn" aria-label="Fechar ranking">✕</button>
+    </div>
+
+    <div class="ranking-filters" id="rankingFilters">
+      <button class="rf-btn active" type="button" data-room="all">Todos</button>
+      <button class="rf-btn" type="button" data-room="2A">2A</button>
+      <button class="rf-btn" type="button" data-room="3A">3A</button>
+      <button class="rf-btn" type="button" data-room="3B">3B</button>
+    </div>
+
+    <div class="ranking-table-wrap">
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Turma</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody id="rankingTableBody">
+          <tr><td colspan="4" class="ranking-loading">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="ranking-note">Somente a sua maior pontuação é registrada</p>
+  </aside>
   <footer class="bottombar" id="bottomBar" aria-hidden="true">
     <div class="footer-content" id="footerContent">
-      🏫 <span>Jogo matemático feito para feira de matemática</span>
+       <span>Jogo matemático feito para feira de matemática</span>
       <br>
       <strong>EREF Educador Paulo Freire</strong>
     </div>
@@ -65,69 +111,38 @@
   <!-- DIFICULDADE -->
   <section id="difficulty" class="screen" aria-label="Seleção de dificuldade">
     <div class="wrap">
-      <div class="top-actions">
-          <button class="back-inline" id="backToMenuFromDifficulty" type="button">← Voltar</button>
-      </div>
+      <div class="difficulty-inner">
+        <div class="top-actions">
+            <button class="back-inline" id="backToMenuFromDifficulty" type="button">← Voltar</button>
+        </div>
 
-      <div class="section-title">Selecione o nível de dificuldade</div>
+        <div class="section-title">Selecione o nível de dificuldade</div>
 
-      <div class="selection-grid" id="difficultyGrid">
-        <button class="select-card diff-card" type="button" data-diff="easy" style="--d: 0ms;">
-          <div class="select-icon">⭐</div>
-          <div class="select-label">Fácil</div>
-          <div class="select-desc">Números 1–34</div>
-        </button>
+        <div class="selection-grid" id="difficultyGrid">
+          <button class="select-card diff-card" type="button" data-diff="easy" style="--d: 0ms;">
+            <div class="select-icon">⭐</div>
+            <div class="select-label">Fácil</div>
+            <div class="select-desc">Números 1–34</div>
+          </button>
 
-        <button class="select-card diff-card" type="button" data-diff="medium" style="--d: 35ms;">
-          <div class="select-icon">⭐⭐</div>
-          <div class="select-label">Médio</div>
-          <div class="select-desc">Números 35–99</div>
-        </button>
+          <button class="select-card diff-card" type="button" data-diff="medium" style="--d: 35ms;">
+            <div class="select-icon">⭐⭐</div>
+            <div class="select-label">Médio</div>
+            <div class="select-desc">Números 35–99</div>
+          </button>
 
-        <button class="select-card diff-card" type="button" data-diff="hard" style="--d: 70ms;">
-          <div class="select-icon">⭐⭐⭐</div>
-          <div class="select-label">Difícil</div>
-          <div class="select-desc">Números 100–999</div>
-        </button>
+          <button class="select-card diff-card" type="button" data-diff="hard" style="--d: 70ms;">
+            <div class="select-icon">⭐⭐⭐</div>
+            <div class="select-label">Difícil</div>
+            <div class="select-desc">Números 100–999</div>
+          </button>
 
-        <button class="select-card diff-card" type="button" data-diff="assad" style="--d: 105ms;">
-          <div class="select-icon">💀</div>
-          <div class="select-label">Impossível</div>
-          <div class="select-desc">Números 1.000–999.999</div>
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- MODO -->
-  <section id="mode" class="screen" aria-label="Seleção de modo de jogo">
-    <div class="wrap">
-      <div class="top-actions">
-        <button class="back-inline" id="backToDifficultyFromMode" type="button">← Voltar</button>
-      </div>
-
-      <div class="section-title">Selecione a quantidade de rodadas</div>
-
-      <div class="selection-grid" id="modeGrid">
-        <button class="select-card mode-card" type="button" data-mode="5" style="--d: 0ms;">
-          <div class="round-badge">~2 min</div>
-          <div class="select-label">5</div>
-        </button>
-
-        <button class="select-card mode-card" type="button" data-mode="10" style="--d: 35ms;">
-          <div class="round-badge">~4 min</div>
-          <div class="select-label">10</div>
-        </button>
-
-        <button class="select-card mode-card" type="button" data-mode="20" style="--d: 70ms;">
-          <div class="round-badge">~8 min</div>
-          <div class="select-label">20</div>
-        </button>
-
-        <button class="select-card mode-card endless-card" type="button" data-mode="endless" style="--d: 105ms;">
-          <div class="round-badge">∞</div>
-          <div class="select-label endless-label">∞</div>
-        </button>
+          <button class="select-card diff-card" type="button" data-diff="assad" style="--d: 105ms;">
+            <div class="select-icon">💀</div>
+            <div class="select-label">Brutal</div>
+            <div class="select-desc">Números 1.000–9.999</div>
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -136,9 +151,9 @@
   <section id="game" class="screen" aria-label="Tela do jogo">
     <div class="game-wrap normal-theme" id="gameWrap">
 
-      <!-- Timer -->
-      <div class="timer-shell" id="timerShell" aria-label="Tempo restante">
-        <div class="timer-fill" id="timerFill"></div>
+      <div class="session-timer-wrap" id="sessionTimerWrap" aria-label="Tempo restante da sessão">
+        <div class="session-timer-bar" id="sessionTimerBar"></div>
+        <div class="session-timer-text" id="sessionTimerText">50s</div>
       </div>
 
       <!-- GAME NORMAL -->
@@ -153,7 +168,6 @@
 
           <div class="difficulty-label" id="difficultyLabel">🎯 Dificuldade: Fácil</div>
           <div class="current-op" id="currentOpLabel">➕ Operação: Adição</div>
-          <div class="mode-label" id="modeLabel">🔄 Rodadas: 5</div>
 
           <button class="back-btn" id="returnToResultsNormal" type="button">🏳️ Retornar</button>
         </aside>
@@ -161,6 +175,7 @@
         <!-- Centro -->
         <main class="center-area">
           <div class="operation" id="operationDisplay">12 + 8</div>
+          <div class="combo-badge" id="comboBadge" aria-live="polite"></div>
           <div class="answers" id="answers"></div>
           <div class="round-tip" id="roundTip">⏱️ Responda antes do tempo acabar para ganhar mais pontos.</div>
         </main>
@@ -174,10 +189,6 @@
           <div class="stat wrong" id="wrongStat">
             ❌ <span id="wrongValue">0</span> <small>Erros</small>
           </div>
-
-          <div class="stat">
-            🔁 <span id="roundValue">0</span> <small id="roundMaxLabel">/ 5</small>
-          </div>
         </aside>
       </div>
     </div>
@@ -187,8 +198,7 @@
   <section id="results" class="screen" aria-label="Tela de resultados">
     <div class="results-wrap">
       <div class="results-header">
-        <div id="resultsMedal" style="font-size: 72px; text-align: center; margin-bottom: 4px;"></div>
-        <h3 id="resultsTitle">Missão Completa</h3>
+        <h3 id="resultsTitle">Resultado</h3>
         <div class="results-note" id="resultsSubheading">Analisando sua habilidade mental...</div>
       </div>
 
@@ -200,31 +210,79 @@
 
         <div class="results-box-group">
           <div class="results-box sm-box">
-            <strong>Modo</strong>
-            <div id="resultMode" class="val">Normal</div>
+            <strong>Questões</strong>
+            <div id="resultQuestions" class="val">0</div>
           </div>
 
           <div class="results-box sm-box">
-            <strong>Regras</strong>
-            <div id="resultMeta" class="val">Add - Fácil</div>
+            <strong>Acertos</strong>
+            <div id="resultCorrectSummary" class="val">0</div>
           </div>
 
           <div class="results-box sm-box">
-            <strong>Precisão</strong>
-            <div id="resultCW" class="val" style="display:flex; justify-content:center; gap:8px;">
-              <span style="color:#2b793f;" id="cwCorrect">0</span> / 
-              <span style="color:#b23131;" id="cwWrong">0</span>
-            </div>
+            <strong>Dificuldade</strong>
+            <div id="resultDifficulty" class="val">Fácil</div>
+          </div>
+
+          <div class="results-box sm-box">
+            <strong>Operação</strong>
+            <div id="resultOperation" class="val">Adição</div>
           </div>
         </div>
       </div>
 
       <div class="results-actions">
-        <button class="results-btn outline-btn" id="backHomeBtn" type="button">🏠 Início</button>
-        <button class="results-btn fill-btn" id="playAgainBtn" type="button">🔄 Jogar Novamente</button>
+        <button class="results-btn outline-btn" id="backHomeBtn" type="button">Início</button>
+        <button class="results-btn fill-btn" id="playAgainBtn" type="button">Jogar Novamente</button>
       </div>
     </div>
   </section>
+
+  <div class="pregame-overlay" id="pregameOverlay" aria-hidden="true">
+    <div class="pregame-message" id="pregameMessage"></div>
+    <div class="pregame-number" id="pregameNumber"></div>
+  </div>
+
+  <div class="player-overlay" id="playerOverlay" aria-modal="true" role="dialog" aria-label="Identificação do jogador">
+    <div class="player-overlay-backdrop"></div>
+    <div class="player-card" id="playerCard">
+      <h2 class="player-card-title">Quem está jogando?</h2>
+      <div class="player-fields">
+        <div class="player-field-group">
+          <label for="playerNameInput">Seu nome <span>(máx. 8 letras)</span></label>
+          <input
+            type="text"
+            id="playerNameInput"
+            maxlength="8"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+            placeholder="Ex: Maria"
+          />
+        </div>
+        <div class="player-field-group">
+          <label>Sua turma</label>
+          <div class="room-selector" id="roomSelector">
+            <button type="button" class="room-btn" data-room="2A">2A</button>
+            <button type="button" class="room-btn" data-room="3A">3A</button>
+            <button type="button" class="room-btn" data-room="3B">3B</button>
+          </div>
+        </div>
+      </div>
+      <p class="player-card-error" id="playerError"></p>
+      <button type="button" class="player-confirm-btn" id="playerConfirmBtn">Confirmar →</button>
+    </div>
+  </div>
+
+  <div class="congrats-overlay" id="congratsOverlay" aria-modal="true" role="dialog">
+    <div class="congrats-card" id="congratsCard">
+      <div class="congrats-medal" id="congratsMedal"></div>
+      <div class="congrats-title" id="congratsTitle"></div>
+      <div class="congrats-rank" id="congratsRank"></div>
+      <button type="button" class="congrats-btn" id="congratsHomeBtn">Jogar de novo</button>
+      <button type="button" class="congrats-other-btn" id="congratsOtherBtn">Sou outro usuário</button>
+    </div>
+  </div>
 <script>
     // ========= Anti seleção / anti clique direito =========
     document.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -238,78 +296,163 @@
       home: document.getElementById("home"),
       menu: document.getElementById("menu"),
       difficulty: document.getElementById("difficulty"),
-      mode: document.getElementById("mode"),
       game: document.getElementById("game"),
       results: document.getElementById("results")
     };
 
     const startBtn = document.getElementById("startBtn");
-
     const menuCards = [...document.querySelectorAll(".menuCard")];
     const opCards = [...document.querySelectorAll(".card.op")];
-
     const diffCards = [...document.querySelectorAll(".diff-card")];
-    const modeCards = [...document.querySelectorAll(".mode-card")];
-
     const backToMenuFromDifficulty = document.getElementById("backToMenuFromDifficulty");
-    const backToDifficultyFromMode = document.getElementById("backToDifficultyFromMode");
 
-    // normal game
     const gameWrap = document.getElementById("gameWrap");
-    const timerShell = document.getElementById("timerShell");
-    const timerFill = document.getElementById("timerFill");
     const normalGameLayout = document.getElementById("normalGameLayout");
-
+    const sessionTimerBar = document.getElementById("sessionTimerBar");
+    const sessionTimerText = document.getElementById("sessionTimerText");
     const operationDisplay = document.getElementById("operationDisplay");
+    const comboBadge = document.getElementById("comboBadge");
     const answersEl = document.getElementById("answers");
     const roundTip = document.getElementById("roundTip");
 
     const pointsValue = document.getElementById("pointsValue");
     const difficultyLabel = document.getElementById("difficultyLabel");
     const currentOpLabel = document.getElementById("currentOpLabel");
-    const modeLabel = document.getElementById("modeLabel");
     const correctValue = document.getElementById("correctValue");
     const wrongValue = document.getElementById("wrongValue");
-    const roundValue = document.getElementById("roundValue");
-    const roundMaxLabel = document.getElementById("roundMaxLabel");
-
     const correctStat = document.getElementById("correctStat");
     const wrongStat = document.getElementById("wrongStat");
     const returnToResultsNormal = document.getElementById("returnToResultsNormal");
 
-    // results
     const resultScore = document.getElementById("resultScore");
-    const resultMode = document.getElementById("resultMode");
-    const resultMeta = document.getElementById("resultMeta");
-    const cwCorrect = document.getElementById("cwCorrect");
-    const cwWrong = document.getElementById("cwWrong");
+    const resultQuestions = document.getElementById("resultQuestions");
+    const resultCorrectSummary = document.getElementById("resultCorrectSummary");
+    const resultDifficulty = document.getElementById("resultDifficulty");
+    const resultOperation = document.getElementById("resultOperation");
     const playAgainBtn = document.getElementById("playAgainBtn");
     const backHomeBtn = document.getElementById("backHomeBtn");
 
+    const pregameOverlay = document.getElementById("pregameOverlay");
+    const pregameMessage = document.getElementById("pregameMessage");
+    const pregameNumber = document.getElementById("pregameNumber");
+
+    const playerOverlay = document.getElementById("playerOverlay");
+    const playerNameInput = document.getElementById("playerNameInput");
+    const playerError = document.getElementById("playerError");
+    const playerConfirmBtn = document.getElementById("playerConfirmBtn");
+    const roomButtons = [...document.querySelectorAll(".room-btn")];
+    const congratsOverlay = document.getElementById("congratsOverlay");
+    const congratsMedal = document.getElementById("congratsMedal");
+    const congratsTitle = document.getElementById("congratsTitle");
+    const congratsRank = document.getElementById("congratsRank");
+    const congratsHomeBtn = document.getElementById("congratsHomeBtn");
+    const congratsOtherBtn = document.getElementById("congratsOtherBtn");
+
+    const rankingToggleBtn = document.getElementById("rankingToggleBtn");
+    const rankingPanel = document.getElementById("rankingPanel");
+    const rankingCloseBtn = document.getElementById("rankingCloseBtn");
+    const rankingTableBody = document.getElementById("rankingTableBody");
+    const rankingFilterButtons = [...document.querySelectorAll(".rf-btn")];
+
     // ========= Estado =========
     let navigationLocked = false;
+    let sessionRafId = null;
+    let questionRafId = null;
+    let rankingCurrentFilter = "all";
+    let inactivityTimer = null;
+    let newPlayerNeeded = false;
+
+    let currentPlayer = {
+      name: null,
+      room: null
+    };
 
     const game = {
       operation: "add",
       difficulty: "easy",
-      mode: "5",              // 5, 10, 20, endless
-
       points: 0,
-      correct: 0,
-      wrong: 0,
-      answeredRounds: 0,
-      targetRounds: 5,
-
-      timeLimitMs: 20000,
-      startAt: 0,
-      endAt: 0,
-      rafId: null,
-      timeExpired: false,
+      rawScore: 0,
+      questionsAnswered: 0,
+      correctAnswers: 0,
+      wrongAnswers: 0,
+      combo: 0,
+      comboMax: 0,
+      comboMult: 1,
+      sessionStartTime: 0,
+      sessionDurationMs: 0,
+      sessionExpired: false,
+      questionStartTime: 0,
+      questionExpired: false,
       roundLocked: false,
-
       currentQuestion: null,
       currentOptions: []
     };
+
+    const FLOAT_CONFIG = {
+      home:       { count: 22, opacityMin: 0.10, opacityMax: 0.22 },
+      menu:       { count: 14, opacityMin: 0.06, opacityMax: 0.13 },
+      difficulty: { count: 14, opacityMin: 0.06, opacityMax: 0.13 },
+      results:    { count: 10, opacityMin: 0.05, opacityMax: 0.10 }
+    };
+
+    const COMBO_LEVELS = [
+      { min: 7, cls: "lvl3", wrap: "combo-1", text: "💥 LENDÁRIO!  ×2.0" },
+      { min: 5, cls: "lvl2", wrap: "combo-2", text: "⚡ IMPARÁVEL!  ×1.6" },
+      { min: 3, cls: "lvl1", wrap: "combo-3", text: "🔥 Em chamas!  ×1.3" }
+    ];
+
+    // ========= Supabase =========
+    function hasDatabase() {
+      return Boolean(_supabase);
+    }
+
+    async function dbGetLeaderboard(room = null) {
+      if(!hasDatabase()) return [];
+      let query = _supabase
+        .from("mathrix_scores")
+        .select("name, room, score, operation, difficulty, combo_max")
+        .order("score", { ascending: false })
+        .limit(50);
+      if(room) query = query.eq("room", room);
+      const { data, error } = await query;
+      if(error){ console.error("dbGetLeaderboard:", error); return []; }
+      return data ?? [];
+    }
+
+    async function dbCheckExists(name, room) {
+      if(!hasDatabase()) return null;
+      const { data, error } = await _supabase
+        .from("mathrix_scores")
+        .select("score")
+        .eq("name", name)
+        .eq("room", room)
+        .maybeSingle();
+      if(error){ console.error("dbCheckExists:", error); return null; }
+      return data;
+    }
+
+    async function dbUpsertScore(name, room, score, operation, difficulty, comboMax, accuracy) {
+      if(!hasDatabase()) return { updated: false, final: score };
+      const existing = await dbCheckExists(name, room);
+      if(existing && existing.score >= score) return { updated: false, final: existing.score };
+
+      const { error } = await _supabase
+        .from("mathrix_scores")
+        .upsert({
+          name, room, score, operation, difficulty,
+          combo_max: comboMax, accuracy,
+          updated_at: new Date().toISOString()
+        }, { onConflict: "name,room" });
+
+      if(error){ console.error("dbUpsertScore:", error); return { updated: false, final: score }; }
+      return { updated: true, final: score };
+    }
+
+    async function dbGetRank(name, room) {
+      const all = await dbGetLeaderboard();
+      const idx = all.findIndex(r => r.name === name && r.room === room);
+      return idx === -1 ? null : idx + 1;
+    }
 
     // ========= Utilidades =========
     function rand(min, max){
@@ -324,12 +467,35 @@
       return arr;
     }
 
+    function wait(ms){
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function formatRangeNumber(value){
+      return value.toLocaleString("pt-BR");
+    }
+
+    function escapeHTML(value){
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function bump(el){
+      el.classList.add("bump");
+      setTimeout(() => el.classList.remove("bump"), 180);
+    }
+
     function difficultyLabelPT(diff){
       switch(diff){
         case "easy": return "Fácil";
         case "medium": return "Médio";
         case "hard": return "Difícil";
-        case "assad": return "Impossível";
+        case "assad": return "Brutal";
         default: return diff;
       }
     }
@@ -354,27 +520,26 @@
       }
     }
 
-    function bump(el){
-      el.classList.add("bump");
-      setTimeout(() => el.classList.remove("bump"), 180);
-    }
-
     function setScreen(name){
       for(const [key, el] of Object.entries(screens)){
         el.classList.toggle("active", key === name);
       }
       body.dataset.screen = name;
 
-      if(name === "home"){
-        spawnFloatingSymbols();
+      if(FLOAT_CONFIG[name]){
+        spawnFloatingSymbols(name);
       }
 
       if(name === "menu"){
         animateIn(menuCards, "animate-in");
       } else if(name === "difficulty"){
         animateIn(diffCards, "animate-in");
-      } else if(name === "mode"){
-        animateIn(modeCards, "animate-in");
+      }
+
+      if(name === "game"){
+        closeRankingPanel();
+      }else{
+        resetInactivityTimer();
       }
     }
 
@@ -394,81 +559,61 @@
       });
     }
 
-    function modeToText(value){
-      return value === "endless" ? "Infinito" : value;
-    }
+    function spawnFloatingSymbols(screenName) {
+      const cfg = FLOAT_CONFIG[screenName] ?? { count: 12, opacityMin: 0.06, opacityMax: 0.12 };
+      const container = document.getElementById(screenName);
+      if(!container) return;
+      container.querySelectorAll(".float-sym").forEach(el => el.remove());
 
-    function getRoundsTarget(mode){
-      if(mode === "endless") return Infinity;
-      return Number(mode);
-    }
+      const symbols = ["+","−","×","÷","=","π","∑","√","7","3","9","2","5","8","1","6","%","!","∞","≠","²","³"];
+      const safeZones = [
+        [0, 20, 0, 100],
+        [80, 100, 0, 100],
+        [20, 80, 0, 18],
+        [20, 80, 82, 100]
+      ];
 
-    function stopTimer(){
-      if(game.rafId){
-        cancelAnimationFrame(game.rafId);
-        game.rafId = null;
+      for(let i = 0; i < cfg.count; i++){
+        const zone = safeZones[i % safeZones.length];
+        const sym = symbols[i % symbols.length];
+        const el = document.createElement("span");
+        el.className = "float-sym";
+        el.textContent = sym;
+        el.style.cssText = `
+          position:absolute; pointer-events:none; user-select:none; z-index:0;
+          left:${zone[0] + Math.random() * (zone[1] - zone[0])}%;
+          top:${zone[2] + Math.random() * (zone[3] - zone[2])}%;
+          font-size:${20 + Math.random() * 30}px;
+          font-family:'Luckiest Guy',cursive;
+          color:var(--wine);
+          opacity:${cfg.opacityMin + Math.random() * (cfg.opacityMax - cfg.opacityMin)};
+          transform:rotate(${-18 + Math.random() * 36}deg);
+          animation:floatSym ${10 + Math.random() * 10}s ease-in-out infinite alternate;
+          animation-delay:-${Math.random() * 10}s;
+        `;
+        container.appendChild(el);
       }
     }
 
-    function getTimeLimitMs(){
-      return 20000;
-    }
-
-    function startTimer(){
-      stopTimer();
-      game.timeExpired = false;
-      game.timeLimitMs = getTimeLimitMs();
-      game.startAt = performance.now();
-      game.endAt = game.startAt + game.timeLimitMs;
-
-      timerFill.classList.remove("expired");
-      timerFill.style.width = "100%";
-
-      const tick = (now) => {
-        const remaining = Math.max(0, game.endAt - now);
-        const percent = remaining / game.timeLimitMs;
-
-        timerFill.style.width = (percent * 100) + "%";
-        const hue = percent * 120; // 0=vermelho, 120=verde
-        timerFill.style.background = `hsl(${hue}, 70%, 45%)`;
-
-        if(remaining <= 0){
-          game.timeExpired = true;
-          timerFill.classList.add("expired");
-          game.rafId = null;
-
-          roundTip.textContent = "⏰ O tempo acabou. Você ainda pode responder, mas uma resposta correta valerá apenas 1 ponto.";
-          return;
-        }
-
-        game.rafId = requestAnimationFrame(tick);
-      };
-
-      game.rafId = requestAnimationFrame(tick);
-    }
-
+    // ========= Ranges / problemas =========
     function getDifficultyRange(diff){
       switch(diff){
-        case "easy":   return [1, 34];
+        case "easy": return [1, 34];
         case "medium": return [35, 99];
-        case "hard":   return [100, 999];
-        case "assad":  return [1000, 999999];
-        default:       return [1, 34];
+        case "hard": return [100, 999];
+        case "assad": return [1000, 9999];
+        default: return [1, 34];
       }
     }
 
-    function getMulDivRange(diff) {
-      switch(diff) {
-        case "easy":   return [1, 10];
+    function getMulDivRange(diff){
+      switch(diff){
+        case "easy": return [1, 10];
         case "medium": return [15, 30];
-        case "hard":   return [30, 60];
-        case "assad":  return [60, 110];
-        default:       return [1, 10];
+        case "hard": return [30, 60];
+        case "assad": return [60, 110];
+        default: return [1, 10];
       }
-    }
-
-    function formatRangeNumber(value){
-      return value.toLocaleString("pt-BR");
     }
 
     function getRangeForDifficultyCard(diff){
@@ -494,35 +639,41 @@
     function buildProblem(){
       const op = game.operation;
       const diff = game.difficulty;
-
       let a = 0, b = 0, answer = 0;
 
-      if(op === "add"){
+      if(diff === "assad"){
+        if(op === "add" || op === "sub"){
+          a = rand(1000, 9999);
+          b = rand(1000, 9999);
+          if(op === "sub" && a < b) [a, b] = [b, a];
+          answer = op === "add" ? a + b : a - b;
+        }
+        if(op === "mul"){
+          a = rand(60, 110);
+          b = rand(60, 110);
+          answer = a * b;
+        }
+        if(op === "div"){
+          b = rand(60, 110);
+          const quotient = rand(60, 110);
+          a = b * quotient;
+          answer = quotient;
+        }
+      }else if(op === "add"){
         a = randomByDifficulty(diff);
         b = randomByDifficulty(diff);
         answer = a + b;
-      }
-
-      if(op === "sub"){
+      }else if(op === "sub"){
         a = randomByDifficulty(diff);
         b = randomByDifficulty(diff);
-
-        // Easy não pode dar negativo; do Medium pra cima pode
-        if(diff === "easy" && a < b){
-          [a, b] = [b, a];
-        }
-
+        if(diff === "easy" && a < b) [a, b] = [b, a];
         answer = a - b;
-      }
-
-      if(op === "mul"){
+      }else if(op === "mul"){
         const [min, max] = getMulDivRange(diff);
         a = rand(min, max);
         b = rand(min, max);
         answer = a * b;
-      }
-
-      if(op === "div"){
+      }else if(op === "div"){
         const [min, max] = getMulDivRange(diff);
         b = rand(Math.max(1, min), max);
         const quotient = rand(Math.max(1, min), max);
@@ -531,190 +682,333 @@
       }
 
       const symbol = operationSymbol(op);
-      const display = `${a} ${symbol} ${b}`;
-
-      return { a, b, answer, symbol, display };
+      return { a, b, answer, symbol, display: `${a} ${symbol} ${b}` };
     }
 
-    function buildOptions(correct, op, diff, totalOptions){
-      const options = new Set([correct]);
-      const absCorrect = Math.abs(correct);
+    function buildOptions(correctAnswer, op, diff, count = 4){
+      const opts = new Set([correctAnswer]);
+      const absCorrect = Math.abs(correctAnswer);
+      let spread = 10;
 
-      let spreadBase = 10;
-      if(diff === "easy") spreadBase = 10;
-      if(diff === "medium") spreadBase = 25;
-      if(diff === "hard") spreadBase = 80;
-      if(diff === "assad") spreadBase = 200;
-
+      if(diff === "medium") spread = 25;
+      if(diff === "hard") spread = 80;
+      if(diff === "assad") spread = Math.max(20, Math.round(absCorrect * 0.04));
       if(op === "mul" || op === "div"){
-        const [min, max] = getMulDivRange(diff);
-        const typicalResult = max * max * 0.5;
-        spreadBase = Math.max(spreadBase, Math.round(typicalResult * 0.15));
+        const [, max] = getMulDivRange(diff);
+        spread = Math.max(spread, Math.round(max * max * 0.08));
       }
       if(op === "add" || op === "sub"){
-        spreadBase = Math.max(spreadBase, Math.round(Math.max(8, absCorrect * 0.05)));
+        spread = Math.max(spread, Math.round(Math.max(8, absCorrect * 0.05)));
       }
 
-      let guard = 0;
-      while(options.size < totalOptions && guard < 900){
-        guard++;
-
-        let candidate = correct;
-        const mode = rand(1, 5);
-
-        if(mode === 1){
-          candidate = correct + rand(-spreadBase, spreadBase);
-        }else if(mode === 2){
-          candidate = correct + rand(-Math.max(3, Math.round(spreadBase * 0.35)), Math.max(3, Math.round(spreadBase * 0.35)));
-        }else if(mode === 3){
-          candidate = correct + (Math.random() < 0.5 ? -1 : 1) * rand(1, Math.max(4, Math.round(spreadBase * 0.15)));
-        }else if(mode === 4){
-          const chars = String(Math.abs(correct)).split("");
-          if(chars.length > 1){
-            const i = rand(0, chars.length - 1);
-            chars[i] = String(rand(0, 9));
-            candidate = Number((correct < 0 ? "-" : "") + chars.join(""));
-          }else{
-            candidate = correct + rand(-9, 9);
-          }
+      let attempts = 0;
+      while(opts.size < count && attempts < 300){
+        attempts++;
+        let distractor;
+        if(diff === "assad"){
+          const delta = (Math.random() > 0.5 ? 1 : -1) * rand(1, spread);
+          distractor = correctAnswer + delta;
+          if(distractor <= 0) continue;
         }else{
-          candidate = correct + (Math.random() < 0.5 ? -1 : 1) * rand(2, Math.max(5, Math.round(Math.max(10, absCorrect) * 0.03)));
+          const variant = rand(1, 4);
+          if(variant === 1){
+            distractor = correctAnswer + rand(-spread, spread);
+          }else if(variant === 2){
+            distractor = correctAnswer + (Math.random() < 0.5 ? -1 : 1) * rand(1, Math.max(4, Math.round(spread * 0.35)));
+          }else if(variant === 3){
+            const chars = String(Math.abs(correctAnswer)).split("");
+            if(chars.length > 1){
+              const i = rand(0, chars.length - 1);
+              chars[i] = String(rand(0, 9));
+              distractor = Number((correctAnswer < 0 ? "-" : "") + chars.join(""));
+            }else{
+              distractor = correctAnswer + rand(-9, 9);
+            }
+          }else{
+            distractor = correctAnswer + (Math.random() < 0.5 ? -1 : 1) * rand(2, Math.max(5, Math.round(Math.max(10, absCorrect) * 0.03)));
+          }
         }
-
-        if(Object.is(candidate, -0)) candidate = 0;
-        if(candidate !== correct){
-          options.add(candidate);
-        }
+        if(Object.is(distractor, -0)) distractor = 0;
+        if(distractor !== correctAnswer) opts.add(distractor);
       }
 
-      return shuffle([...options]).slice(0, totalOptions);
+      let fallbackStep = 1;
+      while(opts.size < count){
+        opts.add(correctAnswer + fallbackStep);
+        fallbackStep++;
+      }
+
+      return shuffle([...opts]).slice(0, count);
     }
 
-    // ========= Pontuação =========
-    function calculateNormalPoints(){
-      if(game.timeExpired){
-        return 1;
+    // ========= Timers =========
+    function getSessionDurationMs(diff){
+      switch(diff){
+        case "easy": return 50000;
+        case "medium": return 65000;
+        case "hard": return 80000;
+        case "assad": return 95000;
+        default: return 50000;
       }
-      const elapsedSec = (performance.now() - game.startAt) / 1000;
-      return Math.max(1, Math.floor(20 - (elapsedSec / 2)));
+    }
+
+    function getQuestionTimeLimitMs(diff){
+      switch(diff){
+        case "easy": return 8000;
+        case "medium": return 10000;
+        case "hard": return 13000;
+        case "assad": return 16000;
+        default: return 8000;
+      }
+    }
+
+    function startSession(){
+      stopSession();
+      game.sessionStartTime = Date.now();
+      game.sessionDurationMs = getSessionDurationMs(game.difficulty);
+      game.sessionExpired = false;
+      tickSession();
+    }
+
+    function tickSession(){
+      const elapsed = Date.now() - game.sessionStartTime;
+      const remaining = Math.max(0, game.sessionDurationMs - elapsed);
+      const pct = remaining / game.sessionDurationMs;
+      const hue = pct * 120;
+
+      sessionTimerBar.style.width = (pct * 100) + "%";
+      sessionTimerBar.style.background = `linear-gradient(90deg, hsl(${hue},65%,35%), hsl(${hue},70%,48%))`;
+      sessionTimerText.textContent = Math.ceil(remaining / 1000) + "s";
+
+      if(remaining <= 0){
+        game.sessionExpired = true;
+        endGameByTimeout();
+        return;
+      }
+
+      sessionRafId = requestAnimationFrame(tickSession);
+    }
+
+    function stopSession(){
+      if(sessionRafId){
+        cancelAnimationFrame(sessionRafId);
+        sessionRafId = null;
+      }
+    }
+
+    function startQuestionTimer(){
+      stopQuestionTimer();
+      game.questionStartTime = Date.now();
+      game.questionExpired = false;
+      const limit = getQuestionTimeLimitMs(game.difficulty);
+
+      const tickQ = () => {
+        if(Date.now() - game.questionStartTime >= limit){
+          game.questionExpired = true;
+          questionRafId = null;
+          return;
+        }
+        questionRafId = requestAnimationFrame(tickQ);
+      };
+
+      questionRafId = requestAnimationFrame(tickQ);
+    }
+
+    function stopQuestionTimer(){
+      if(questionRafId){
+        cancelAnimationFrame(questionRafId);
+        questionRafId = null;
+      }
+    }
+
+    function endGameByTimeout(){
+      stopSession();
+      stopQuestionTimer();
+      game.sessionExpired = true;
+      game.roundLocked = true;
+      roundTip.textContent = "⏰ Tempo encerrado!";
+      setTimeout(() => {
+        if(body.dataset.screen === "game") goToResults();
+      }, 600);
+    }
+
+    // ========= Pontuação / combo =========
+    function calcSpeedBonus(elapsedMs, limitMs){
+      if(elapsedMs >= limitMs) return 10;
+      const pct = 1 - (elapsedMs / limitMs);
+      if(pct > 0.80) return 200;
+      if(pct > 0.60) return 150;
+      if(pct > 0.40) return 100;
+      if(pct > 0.20) return 60;
+      return 30;
+    }
+
+    function getDiffMult(diff){
+      return { easy: 1, medium: 1.5, hard: 2, assad: 3 }[diff] ?? 1;
+    }
+
+    function getOpMult(op){
+      return { add: 1, sub: 1.2, mul: 1.8, div: 1.8 }[op] ?? 1;
+    }
+
+    function getComboMult(streak){
+      if(streak >= 7) return 2;
+      if(streak >= 5) return 1.6;
+      if(streak >= 3) return 1.3;
+      return 1;
+    }
+
+    function calculateQuestionScore(){
+      const elapsed = Date.now() - game.questionStartTime;
+      const limit = getQuestionTimeLimitMs(game.difficulty);
+      const speed = calcSpeedBonus(elapsed, limit);
+      const raw = Math.round(speed * game.comboMult * getDiffMult(game.difficulty) * getOpMult(game.operation));
+      return Math.max(10, raw);
+    }
+
+    function onCorrectAnswer(){
+      game.combo++;
+      if(game.combo > game.comboMax) game.comboMax = game.combo;
+      game.comboMult = getComboMult(game.combo);
+      showComboFeedback(game.combo);
+    }
+
+    function onWrongAnswer(){
+      game.combo = 0;
+      game.comboMult = 1;
+      hideComboFeedback();
+    }
+
+    function showComboFeedback(streak){
+      const level = COMBO_LEVELS.find(l => streak >= l.min);
+      gameWrap.classList.remove("combo-1", "combo-2", "combo-3");
+      if(!level){
+        hideComboFeedback();
+        return;
+      }
+      comboBadge.className = `combo-badge ${level.cls} show`;
+      comboBadge.textContent = level.text;
+      gameWrap.classList.add(level.wrap);
+    }
+
+    function hideComboFeedback(){
+      comboBadge.classList.remove("show");
+      gameWrap.classList.remove("combo-1", "combo-2", "combo-3");
+      setTimeout(() => {
+        if(!comboBadge.classList.contains("show")){
+          comboBadge.className = "combo-badge";
+        }
+      }, 250);
     }
 
     // ========= Render / Estado de jogo =========
     function updateInfoPanels(){
-      const scoreColor = game.points < 0 ? "#ff6b6b" : "";
-      pointsValue.style.color = scoreColor;
-      pointsValue.textContent = game.points;
+      pointsValue.style.color = "";
+      pointsValue.textContent = game.points.toLocaleString("pt-BR");
       difficultyLabel.textContent = "🎯 Dificuldade: " + difficultyLabelPT(game.difficulty);
-      currentOpLabel.textContent = "➕ Operação: " + operationLabel(game.operation);
-      modeLabel.textContent = "🔄 Rodadas: " + modeToText(game.mode);
-      correctValue.textContent = game.correct;
-      wrongValue.textContent = game.wrong;
-      roundValue.textContent = game.answeredRounds;
-      roundMaxLabel.textContent = game.mode === "endless" ? "/ ∞" : `/ ${game.targetRounds}`;
+      currentOpLabel.textContent = `${operationSymbol(game.operation)} Operação: ${operationLabel(game.operation)}`;
+      correctValue.textContent = game.correctAnswers;
+      wrongValue.textContent = game.wrongAnswers;
     }
 
     function resetGameState(){
-      stopTimer();
-
+      stopSession();
+      stopQuestionTimer();
       game.points = 0;
-      game.correct = 0;
-      game.wrong = 0;
-      game.answeredRounds = 0;
-      game.targetRounds = getRoundsTarget(game.mode);
-
-      game.timeExpired = false;
+      game.rawScore = 0;
+      game.questionsAnswered = 0;
+      game.correctAnswers = 0;
+      game.wrongAnswers = 0;
+      game.combo = 0;
+      game.comboMax = 0;
+      game.comboMult = 1;
+      game.sessionStartTime = 0;
+      game.sessionDurationMs = getSessionDurationMs(game.difficulty);
+      game.sessionExpired = false;
+      game.questionStartTime = 0;
+      game.questionExpired = false;
       game.roundLocked = false;
       game.currentQuestion = null;
       game.currentOptions = [];
 
-      roundValue.textContent = "0";
-      roundTip.textContent = "⏱️ Responda antes do tempo acabar para ganhar mais pontos.";
-
       answersEl.innerHTML = "";
-
-      timerFill.classList.remove("expired");
-      timerFill.style.width = "100%";
-      timerFill.style.transform = "scaleX(1)";
-
+      roundTip.textContent = "⏱️ Responda antes do tempo acabar para ganhar mais pontos.";
+      sessionTimerBar.style.width = "100%";
+      sessionTimerText.textContent = Math.ceil(game.sessionDurationMs / 1000) + "s";
+      hideComboFeedback();
       updateInfoPanels();
     }
 
     function prepareGameLayout(){
       gameWrap.classList.add("normal-theme");
       normalGameLayout.style.display = "grid";
-      answersEl.style.gridTemplateColumns = "repeat(3, minmax(0,1fr))";
+      answersEl.style.gridTemplateColumns = "repeat(2, minmax(0,1fr))";
     }
 
     function startGame(){
       resetGameState();
       prepareGameLayout();
       setScreen("game");
-      newRoundNormal();
+      startSession();
+      newRound();
     }
 
-    // ========= Normal game =========
-    function newRoundNormal(){
+    function newRound(){
+      if(game.sessionExpired || body.dataset.screen !== "game") return;
       game.roundLocked = false;
-      operationDisplay.classList.remove("show-question");
       answersEl.style.opacity = "1";
       game.currentQuestion = buildProblem();
-      game.currentOptions = buildOptions(
-        game.currentQuestion.answer,
-        game.operation,
-        game.difficulty,
-        6
-      );
+      game.currentOptions = buildOptions(game.currentQuestion.answer, game.operation, game.difficulty, 4);
 
       operationDisplay.textContent = game.currentQuestion.display;
-      renderNormalAnswers(game.currentOptions, game.currentQuestion.answer);
-
-      startTimer();
+      renderAnswers(game.currentOptions, game.currentQuestion.answer);
+      startQuestionTimer();
       roundTip.textContent = "⏱️ Responda antes do tempo acabar para ganhar mais pontos.";
       updateInfoPanels();
     }
 
-    function renderNormalAnswers(options, correct){
+    function renderAnswers(options, correct){
       answersEl.innerHTML = "";
-
       options.forEach(value => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "answer";
         btn.textContent = value;
         btn.dataset.value = value;
-
-        btn.addEventListener("click", () => handleNormalAnswer(btn, value, correct));
+        btn.addEventListener("click", () => handleAnswer(btn, value, correct));
         answersEl.appendChild(btn);
       });
     }
 
-    function handleNormalAnswer(buttonEl, value, correct){
-      if(game.roundLocked) return;
+    function advanceRound(){
+      if(game.sessionExpired || body.dataset.screen !== "game") return;
+      newRound();
+    }
+
+    function handleAnswer(buttonEl, value, correct){
+      if(game.roundLocked || game.sessionExpired) return;
       game.roundLocked = true;
-      stopTimer();
+      stopQuestionTimer();
 
       const allButtons = [...answersEl.querySelectorAll(".answer")];
       const isCorrect = value === correct;
+      game.questionsAnswered++;
 
       if(isCorrect){
-        const gained = calculateNormalPoints();
+        onCorrectAnswer();
+        const gained = calculateQuestionScore();
         game.points += gained;
-        game.correct += 1;
-
-        pointsValue.textContent = game.points;
-        correctValue.textContent = game.correct;
+        game.rawScore += gained;
+        game.correctAnswers++;
         buttonEl.classList.add("correct");
         buttonEl.textContent = "✅ " + value;
         bump(correctStat);
-
-        if(game.timeExpired){
-          roundTip.textContent = "✅ Correto! +1 ponto porque o tempo já havia acabado.";
-        }else{
-          roundTip.textContent = `✅ Correto! +${gained} pontos.`;
-        }
+        roundTip.textContent = `✅ Correto! +${gained.toLocaleString("pt-BR")} pontos.`;
+        updateInfoPanels();
+        setTimeout(advanceRound, 600);
       }else{
-        game.wrong += 1;
-        wrongValue.textContent = game.wrong;
+        onWrongAnswer();
+        game.wrongAnswers++;
         buttonEl.classList.add("wrong");
         buttonEl.textContent = "❌ " + value;
         bump(wrongStat);
@@ -725,80 +1019,88 @@
           correctBtn.textContent = "✅ " + correct;
         }
 
-        roundTip.textContent = `❌ Resposta incorreta. A resposta correta era ${correct}.`;
+        roundTip.textContent = `Errou! A resposta era ${correct}.`;
+        updateInfoPanels();
+        setTimeout(advanceRound, 1600);
       }
-
-      game.answeredRounds += 1;
-      updateInfoPanels();
-
-      setTimeout(() => {
-        if(shouldFinishGame()){
-          goToResults();
-        }else{
-          newRoundNormal();
-        }
-      }, 260);
     }
 
-    function shouldFinishGame(){
-      if(game.mode === "endless"){
-        return false;
-      }
-      return game.answeredRounds >= game.targetRounds;
-    }
-
-    function goToResults(){
-      stopTimer();
-      fillResults();
-      setScreen("results");
-    }
-
-    function animateCounter(obj, start, end, duration) {
+    // ========= Resultados =========
+    function animateCounter(obj, start, end, duration){
       let startTimestamp = null;
       const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
+        if(!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
         const easeOutCirc = (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-        obj.innerHTML = Math.floor(easeOutCirc(progress) * (end - start) + start);
-        if (progress < 1) {
+        obj.textContent = Math.floor(easeOutCirc(progress) * (end - start) + start).toLocaleString("pt-BR");
+        if(progress < 1){
           window.requestAnimationFrame(step);
-        } else {
-          obj.innerHTML = end; // ensure precise final value
+        }else{
+          obj.textContent = end.toLocaleString("pt-BR");
         }
       };
       window.requestAnimationFrame(step);
     }
 
-    function fillResults(){
-      const total = game.correct + game.wrong;
-      const accuracy = total > 0 ? game.correct / total : 0;
-
-      const medal = accuracy === 1 ? "🥇" : accuracy >= 0.8 ? "🥈" : accuracy >= 0.6 ? "🥉" : accuracy >= 0.4 ? "⭐" : "📚";
-      const title = accuracy === 1 ? "PERFEITO!" : accuracy >= 0.8 ? "EXCELENTE!" : accuracy >= 0.6 ? "MUITO BOM!" : accuracy >= 0.4 ? "BOM ESFORÇO!" : "CONTINUE!";
-      const msg = accuracy === 1 ? "Perfeito! Você não errou nenhuma! 🏆" : accuracy >= 0.8 ? "Excelente! Você arrasou! 🎯" : accuracy >= 0.6 ? "Muito bom! Continue praticando! 💪" : accuracy >= 0.4 ? "Bom esforço! Tente de novo! 📚" : "Não desista! A prática leva à perfeição! 🌱";
-
-      document.getElementById("resultsMedal").textContent = medal;
-      document.getElementById("resultsTitle").textContent = title;
-      document.getElementById("resultsSubheading").textContent = msg;
-
-      if (accuracy >= 0.8) {
-        spawnConfetti();
-      }
-
-      resultScore.textContent = "0";
-      setTimeout(() => {
-        animateCounter(resultScore, 0, game.points, 1400);
-      }, 400); // Wait for transition
-
-      resultMode.textContent = `Normal • ${modeToText(game.mode)}`;
-
-      resultMeta.textContent = `${operationLabel(game.operation)} - ${difficultyLabelPT(game.difficulty)}`;
-      cwCorrect.textContent = game.correct;
-      cwWrong.textContent = game.wrong;
+    function getAccuracy(){
+      return game.questionsAnswered > 0
+        ? Math.round((game.correctAnswers / game.questionsAnswered) * 100)
+        : 0;
     }
 
-    function spawnConfetti() {
-      for(let i = 0; i < 35; i++) {
+    function buildFinalScorePayload(name = currentPlayer.name, room = currentPlayer.room){
+      const durationSeconds = Math.round(game.sessionDurationMs / 1000);
+      const averageTimePerAnswer = game.questionsAnswered > 0
+        ? Number(((Math.min(Date.now() - game.sessionStartTime, game.sessionDurationMs) / 1000) / game.questionsAnswered).toFixed(2))
+        : 0;
+
+      return {
+        name,
+        room,
+        score: game.points,
+        rawScore: game.rawScore,
+        operation: game.operation,
+        difficulty: game.difficulty,
+        comboMax: game.comboMax,
+        accuracy: getAccuracy(),
+        correctAnswers: game.correctAnswers,
+        wrongAnswers: game.wrongAnswers,
+        questionsAnswered: game.questionsAnswered,
+        durationSeconds,
+        averageTimePerAnswer,
+        createdAt: new Date().toISOString()
+      };
+    }
+
+    function fillResults(){
+      const accuracy = getAccuracy();
+      document.getElementById("resultsTitle").textContent = "Resultado";
+      document.getElementById("resultsSubheading").textContent =
+        game.questionsAnswered > 0
+          ? `${accuracy}% de precisão em ${game.questionsAnswered} questões.`
+          : "Tempo encerrado sem respostas registradas.";
+
+      resultScore.textContent = "0";
+      setTimeout(() => animateCounter(resultScore, 0, game.points, 1000), 200);
+      resultQuestions.textContent = game.questionsAnswered;
+      resultCorrectSummary.textContent = `${game.correctAnswers} / ${game.wrongAnswers}`;
+      resultDifficulty.textContent = difficultyLabelPT(game.difficulty);
+      resultOperation.textContent = operationLabel(game.operation);
+
+      if(accuracy >= 80) spawnConfetti();
+    }
+
+    function goToResults(){
+      stopSession();
+      stopQuestionTimer();
+      game.sessionExpired = true;
+      fillResults();
+      setScreen("results");
+      setTimeout(() => showPlayerOverlay(newPlayerNeeded), 800);
+    }
+
+    function spawnConfetti(){
+      for(let i = 0; i < 35; i++){
         const el = document.createElement("div");
         el.className = "confetti-piece";
         el.style.cssText = `
@@ -810,75 +1112,243 @@
           height: ${6 + Math.random() * 8}px;
           border-radius: ${Math.random() > 0.5 ? "50%" : "2px"};
         `;
-        document.getElementById("results").appendChild(el);
+        screens.results.appendChild(el);
         setTimeout(() => el.remove(), 4000);
       }
     }
 
-    function spawnFloatingSymbols() {
-      const container = document.getElementById("home");
-      container.querySelectorAll(".float-sym").forEach(el => el.remove());
+    // ========= Animação pré-jogo =========
+    async function runPregameAnimation(){
+      pregameMessage.classList.remove("show");
+      pregameNumber.className = "pregame-number";
+      pregameNumber.textContent = "";
+      pregameOverlay.classList.add("active");
+      await wait(120);
 
-      const symbols = [
-        "+", "−", "×", "÷", "=", "π", "∑", "√",
-        "7", "3", "9", "2", "5", "8", "1", "6",
-        "%", "!", "∞", "≠", "²", "³", "∆", "≈",
-        "≤", "≥", "∫", "θ", "x", "y", "10", "12",
-        "45", "90", "()", "[]", "∴", "∵", "log", "φ",
-        "α", "β", "μ", "λ", "∠", "⊕"
-      ];
+      pregameMessage.textContent = "Responda o máximo que conseguir!";
+      pregameMessage.classList.add("show");
+      await wait(1800);
+      pregameMessage.classList.remove("show");
+      await wait(400);
 
-      const safeZones = [
-        [0,  22, 0,  100],
-        [78, 100, 0,  100],
-        [22, 78, 0,  20],
-        [22, 78, 80, 100],
-      ];
+      for(const n of ["3", "2", "1"]){
+        pregameNumber.textContent = n;
+        pregameNumber.classList.remove("out");
+        pregameNumber.classList.add("pop");
+        await wait(750);
+        pregameNumber.classList.remove("pop");
+        pregameNumber.classList.add("out");
+        await wait(220);
+      }
 
-      symbols.forEach((sym, i) => {
-        const zone = safeZones[i % safeZones.length];
-        const x = zone[0] + Math.random() * (zone[1] - zone[0]);
-        const y = zone[2] + Math.random() * (zone[3] - zone[2]);
-
-        const el = document.createElement("span");
-        el.className = "float-sym";
-        el.textContent = sym;
-        el.style.cssText = `
-          position: absolute;
-          left: ${x}%;
-          top: ${y}%;
-          font-size: ${22 + Math.random() * 32}px;
-          font-family: 'Luckiest Guy', cursive;
-          color: var(--wine);
-          opacity: ${0.10 + Math.random() * 0.12};
-          pointer-events: none;
-          user-select: none;
-          z-index: 0;
-          animation: floatSym ${10 + Math.random() * 10}s ease-in-out infinite alternate;
-          animation-delay: -${Math.random() * 10}s;
-          transform: rotate(${-15 + Math.random() * 30}deg);
-        `;
-        container.appendChild(el);
-      });
+      pregameNumber.textContent = "";
+      pregameOverlay.classList.remove("active");
     }
 
-    let footerParallaxOffset = 0;
+    // ========= Jogador / overlays =========
+    function resetInactivityTimer(){
+      if(body.dataset.screen === "game") return;
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        newPlayerNeeded = true;
+      }, 20000);
+    }
 
-    document.addEventListener("wheel", (e) => {
-      if (body.dataset.screen !== "home") return;
+    ["mousemove", "keydown", "click", "touchstart"].forEach(ev => {
+      document.addEventListener(ev, resetInactivityTimer, { passive: true });
+    });
 
-      const footerEl = document.getElementById("footerContent");
-      if (!footerEl) return;
+    function showPlayerOverlay(forceNew = false){
+      if(forceNew) currentPlayer = { name: null, room: null };
+      playerError.textContent = "";
+      playerNameInput.value = currentPlayer.name ?? "";
+      roomButtons.forEach(btn => {
+        btn.classList.toggle("selected", btn.dataset.room === currentPlayer.room);
+      });
+      playerOverlay.classList.add("active");
+      setTimeout(() => playerNameInput.focus(), 150);
+    }
 
-      footerParallaxOffset = Math.max(-18, Math.min(18, footerParallaxOffset + e.deltaY * 0.08));
-      footerEl.style.transform = `translateY(${footerParallaxOffset}px)`;
+    function hidePlayerOverlay(){
+      playerOverlay.classList.remove("active");
+    }
 
-      clearTimeout(window._footerResetTimer);
-      window._footerResetTimer = setTimeout(() => {
-        footerParallaxOffset = 0;
-        footerEl.style.transform = "translateY(0px)";
-      }, 1200);
-    }, { passive: true });
+    roomButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        roomButtons.forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      });
+    });
+
+    playerNameInput.addEventListener("input", () => {
+      playerNameInput.value = playerNameInput.value
+        .toUpperCase()
+        .replace(/[^A-ZÀ-ÖØ-Þ]/g, "")
+        .slice(0, 8);
+    });
+
+    playerConfirmBtn.addEventListener("click", async () => {
+      const name = playerNameInput.value.trim().toUpperCase().slice(0, 8);
+      const roomBtn = document.querySelector(".room-btn.selected");
+      const room = roomBtn?.dataset.room ?? null;
+
+      if(!name || name.length < 2){
+        playerError.textContent = "Digite um nome com pelo menos 2 letras.";
+        return;
+      }
+      if(!room){
+        playerError.textContent = "Selecione sua turma.";
+        return;
+      }
+
+      if(name !== currentPlayer.name || room !== currentPlayer.room){
+        const existing = await dbCheckExists(name, room);
+        if(existing){
+          playerError.innerHTML = `
+            Já existe <strong>${escapeHTML(name)}</strong> na turma <strong>${room}</strong>.
+            É você de novo?
+            <button id="yesBtn" type="button">Sim</button>
+            <button id="noBtn" type="button">Não, sou outro</button>
+          `;
+
+          document.getElementById("yesBtn").onclick = () => {
+            currentPlayer.name = name;
+            currentPlayer.room = room;
+            playerError.textContent = "";
+            saveAndShowCongrats();
+          };
+          document.getElementById("noBtn").onclick = () => {
+            playerNameInput.value = "";
+            playerNameInput.focus();
+            playerError.textContent = "Escolha um nome diferente.";
+          };
+          return;
+        }
+      }
+
+      currentPlayer.name = name;
+      currentPlayer.room = room;
+      saveAndShowCongrats();
+    });
+
+    async function saveAndShowCongrats(){
+      hidePlayerOverlay();
+      const { name, room } = currentPlayer;
+      const payload = buildFinalScorePayload(name, room);
+
+      await dbUpsertScore(
+        name,
+        room,
+        payload.score,
+        payload.operation,
+        payload.difficulty,
+        payload.comboMax,
+        payload.accuracy
+      );
+
+      const rank = await dbGetRank(name, room);
+      showCongrats(name, rank);
+      newPlayerNeeded = false;
+      if(rankingPanel.classList.contains("open")){
+        loadRankingData(rankingCurrentFilter);
+      }
+    }
+
+    function showCongrats(name, rank){
+      const medals = { 1: "🥇", 2: "🥈", 3: "🥉" };
+      congratsMedal.textContent = medals[rank] ?? "";
+      congratsTitle.innerHTML = `Parabéns, <strong>${escapeHTML(name)}</strong>!`;
+
+      if(rank === 1){
+        congratsRank.textContent = "Você está em 1º lugar! 🏆";
+      }else if(rank && rank <= 3){
+        congratsRank.textContent = `Você está em ${rank}º lugar!`;
+      }else if(rank){
+        congratsRank.textContent = `Você está em #${rank} no ranking.`;
+      }else{
+        congratsRank.textContent = hasDatabase()
+          ? "Sua pontuação foi registrada fora do top 50."
+          : "Ranking indisponível no momento.";
+      }
+
+      congratsOverlay.classList.add("active");
+    }
+
+    congratsOtherBtn.addEventListener("click", () => {
+      congratsOverlay.classList.remove("active");
+      newPlayerNeeded = true;
+      currentPlayer = { name: null, room: null };
+      showPlayerOverlay(true);
+    });
+
+    congratsHomeBtn.addEventListener("click", () => {
+      congratsOverlay.classList.remove("active");
+      setScreen("home");
+    });
+
+    // ========= Ranking =========
+    rankingToggleBtn.addEventListener("click", openRankingPanel);
+    rankingCloseBtn.addEventListener("click", closeRankingPanel);
+
+    function openRankingPanel(){
+      rankingPanel.classList.add("open");
+      rankingPanel.setAttribute("aria-hidden", "false");
+      rankingToggleBtn.setAttribute("aria-expanded", "true");
+      rankingToggleBtn.style.transform = "translateY(-50%) rotate(180deg)";
+      loadRankingData(rankingCurrentFilter);
+    }
+
+    function closeRankingPanel(){
+      rankingPanel.classList.remove("open");
+      rankingPanel.setAttribute("aria-hidden", "true");
+      rankingToggleBtn.setAttribute("aria-expanded", "false");
+      rankingToggleBtn.style.transform = "translateY(-50%) rotate(0deg)";
+    }
+
+    rankingFilterButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        rankingFilterButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        rankingCurrentFilter = btn.dataset.room;
+        loadRankingData(rankingCurrentFilter);
+      });
+    });
+
+    async function loadRankingData(room = "all"){
+      rankingTableBody.innerHTML = `<tr><td colspan="4" class="ranking-loading">Carregando...</td></tr>`;
+      const data = await dbGetLeaderboard(room === "all" ? null : room);
+
+      if(!data.length){
+        rankingTableBody.innerHTML = `<tr><td colspan="4" class="ranking-loading">Nenhuma pontuação ainda.</td></tr>`;
+        return;
+      }
+
+      const posIcons = ["🥇", "🥈", "🥉"];
+      const posCls = ["gold", "silver", "bronze"];
+
+      rankingTableBody.innerHTML = data.map((row, i) => {
+        const pos = i + 1;
+        const isCurr = row.name === currentPlayer.name && row.room === currentPlayer.room;
+        const posHtml = pos <= 3
+          ? `<span class="rank-pos ${posCls[i]}">${posIcons[i]}</span>`
+          : `<span class="rank-pos">${pos}</span>`;
+
+        return `
+          <tr class="${isCurr ? "current-player" : ""}">
+            <td>${posHtml}</td>
+            <td title="${escapeHTML(row.name)}">${escapeHTML(row.name)}</td>
+            <td>${escapeHTML(row.room)}</td>
+            <td>${Number(row.score).toLocaleString("pt-BR")}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    setInterval(() => {
+      if(rankingPanel.classList.contains("open")){
+        loadRankingData(rankingCurrentFilter);
+      }
+    }, 15000);
 
     // ========= Navegação =========
     startBtn.addEventListener("click", () => {
@@ -890,7 +1360,6 @@
       card.addEventListener("click", () => {
         if(navigationLocked) return;
         navigationLocked = true;
-
         game.operation = card.dataset.op;
         updateDifficultyCards();
         animateOutMenu();
@@ -903,18 +1372,13 @@
     });
 
     diffCards.forEach(card => {
-      card.addEventListener("click", () => {
+      card.addEventListener("click", async () => {
         if(navigationLocked) return;
+        navigationLocked = true;
         game.difficulty = card.dataset.diff;
-        setScreen("mode");
-      });
-    });
-
-    modeCards.forEach(card => {
-      card.addEventListener("click", () => {
-        if(navigationLocked) return;
-        game.mode = card.dataset.mode;
+        await runPregameAnimation();
         startGame();
+        navigationLocked = false;
       });
     });
 
@@ -923,27 +1387,25 @@
       setScreen("menu");
     });
 
-    backToDifficultyFromMode.addEventListener("click", () => {
-      navigationLocked = false;
-      updateDifficultyCards();
-      setScreen("difficulty");
-    });
-
     returnToResultsNormal.addEventListener("click", () => {
       goToResults();
     });
 
     playAgainBtn.addEventListener("click", () => {
-      setScreen("mode");
+      setScreen("menu");
     });
 
     backHomeBtn.addEventListener("click", () => {
-      stopTimer();
+      stopSession();
+      stopQuestionTimer();
+      playerOverlay.classList.remove("active");
+      congratsOverlay.classList.remove("active");
       setScreen("home");
     });
 
     // ========= Teclado =========
     function clickOnEnter(el){
+      if(!el) return;
       el.addEventListener("keydown", (e) => {
         if(e.key === "Enter" || e.key === " "){
           e.preventDefault();
@@ -955,19 +1417,25 @@
     [
       startBtn,
       backToMenuFromDifficulty,
-      backToDifficultyFromMode,
       returnToResultsNormal,
       playAgainBtn,
-      backHomeBtn
+      backHomeBtn,
+      playerConfirmBtn,
+      congratsHomeBtn,
+      congratsOtherBtn,
+      rankingToggleBtn,
+      rankingCloseBtn
     ].forEach(clickOnEnter);
 
     opCards.forEach(clickOnEnter);
     diffCards.forEach(clickOnEnter);
-    modeCards.forEach(clickOnEnter);
+    roomButtons.forEach(clickOnEnter);
+    rankingFilterButtons.forEach(clickOnEnter);
 
     // ========= Estado inicial =========
     updateDifficultyCards();
     setScreen("home");
+    resetInactivityTimer();
   </script>
 </body>
 </html>
