@@ -35,13 +35,6 @@
       <button class="ranking-close-btn" id="rankingCloseBtn" aria-label="Fechar ranking">✕</button>
     </div>
 
-    <div class="ranking-filters" id="rankingFilters">
-      <button class="rf-btn active" type="button" data-room="all">Todos</button>
-      <button class="rf-btn" type="button" data-room="2A">2A</button>
-      <button class="rf-btn" type="button" data-room="3A">3A</button>
-      <button class="rf-btn" type="button" data-room="3B">3B</button>
-    </div>
-
     <div class="ranking-table-wrap">
       <table class="ranking-table">
         <thead>
@@ -87,22 +80,34 @@
 
         <button class="card menuCard op" type="button" data-op="add" style="--d: 0ms;">
           <div class="symbol">+</div>
-          <div class="label">Adição</div>
+          <div class="label">
+            <span>Adição</span>
+            <small class="op-mult">1.0x pontos</small>
+          </div>
         </button>
 
         <button class="card menuCard op" type="button" data-op="sub" style="--d: 40ms;">
           <div class="symbol">−</div>
-          <div class="label">Subtração</div>
+          <div class="label">
+            <span>Subtração</span>
+            <small class="op-mult">1.2x pontos</small>
+          </div>
         </button>
 
         <button class="card menuCard op" type="button" data-op="mul" style="--d: 80ms;">
           <div class="symbol">×</div>
-          <div class="label">Multiplicação</div>
+          <div class="label">
+            <span>Multiplicação</span>
+            <small class="op-mult">1.8x pontos</small>
+          </div>
         </button>
 
         <button class="card menuCard op" type="button" data-op="div" style="--d: 120ms;">
           <div class="symbol">÷</div>
-          <div class="label">Divisão</div>
+          <div class="label">
+            <span>Divisão</span>
+            <small class="op-mult">1.8x pontos</small>
+          </div>
         </button>
       </div>
     </div>
@@ -123,24 +128,28 @@
             <div class="select-icon">⭐</div>
             <div class="select-label">Fácil</div>
             <div class="select-desc">Números 1–34</div>
+            <div class="select-mult">1.0x pontos</div>
           </button>
 
           <button class="select-card diff-card" type="button" data-diff="medium" style="--d: 35ms;">
             <div class="select-icon">⭐⭐</div>
             <div class="select-label">Médio</div>
             <div class="select-desc">Números 35–99</div>
+            <div class="select-mult">1.5x pontos</div>
           </button>
 
           <button class="select-card diff-card" type="button" data-diff="hard" style="--d: 70ms;">
             <div class="select-icon">⭐⭐⭐</div>
             <div class="select-label">Difícil</div>
             <div class="select-desc">Números 100–999</div>
+            <div class="select-mult">2.0x pontos</div>
           </button>
 
           <button class="select-card diff-card" type="button" data-diff="assad" style="--d: 105ms;">
             <div class="select-icon">💀</div>
             <div class="select-label">Brutal</div>
             <div class="select-desc">Números 1.000–9.999</div>
+            <div class="select-mult">3.0x pontos</div>
           </button>
         </div>
       </div>
@@ -174,10 +183,19 @@
 
         <!-- Centro -->
         <main class="center-area">
+          <div class="question-timer-wrap" id="questionTimerWrap" aria-label="Tempo restante da questão">
+            <div class="question-timer-bar" id="questionTimerBar"></div>
+            <div class="question-timer-text" id="questionTimerText">8s</div>
+          </div>
           <div class="operation" id="operationDisplay">12 + 8</div>
           <div class="combo-badge" id="comboBadge" aria-live="polite"></div>
           <div class="answers" id="answers"></div>
           <div class="round-tip" id="roundTip">⏱️ Responda antes do tempo acabar para ganhar mais pontos.</div>
+          <div class="combo-timer-wrap" id="comboTimerWrap" aria-label="Tempo restante para manter o combo">
+            <div class="combo-timer-track">
+              <div class="combo-timer-bar" id="comboTimerBar"></div>
+            </div>
+          </div>
         </main>
 
         <!-- Painel direito -->
@@ -311,8 +329,13 @@
     const sessionTimerBar = document.getElementById("sessionTimerBar");
     const sessionTimerText = document.getElementById("sessionTimerText");
     const operationDisplay = document.getElementById("operationDisplay");
+    const questionTimerWrap = document.getElementById("questionTimerWrap");
+    const questionTimerBar = document.getElementById("questionTimerBar");
+    const questionTimerText = document.getElementById("questionTimerText");
     const comboBadge = document.getElementById("comboBadge");
     const answersEl = document.getElementById("answers");
+    const comboTimerWrap = document.getElementById("comboTimerWrap");
+    const comboTimerBar = document.getElementById("comboTimerBar");
     const roundTip = document.getElementById("roundTip");
 
     const pointsValue = document.getElementById("pointsValue");
@@ -352,13 +375,12 @@
     const rankingPanel = document.getElementById("rankingPanel");
     const rankingCloseBtn = document.getElementById("rankingCloseBtn");
     const rankingTableBody = document.getElementById("rankingTableBody");
-    const rankingFilterButtons = [...document.querySelectorAll(".rf-btn")];
 
     // ========= Estado =========
     let navigationLocked = false;
     let sessionRafId = null;
     let questionRafId = null;
-    let rankingCurrentFilter = "all";
+    let comboTimerRafId = null;
     let inactivityTimer = null;
     let newPlayerNeeded = false;
 
@@ -383,16 +405,19 @@
       sessionExpired: false,
       questionStartTime: 0,
       questionExpired: false,
+      comboTimerStartTime: 0,
+      comboTimerExpired: false,
+      comboTimerLimitMs: 0,
       roundLocked: false,
       currentQuestion: null,
       currentOptions: []
     };
 
     const FLOAT_CONFIG = {
-      home:       { count: 22, opacityMin: 0.10, opacityMax: 0.22 },
-      menu:       { count: 14, opacityMin: 0.06, opacityMax: 0.13 },
-      difficulty: { count: 14, opacityMin: 0.06, opacityMax: 0.13 },
-      results:    { count: 10, opacityMin: 0.05, opacityMax: 0.10 }
+      home:       { count: 34, opacityMin: 0.08, opacityMax: 0.18 },
+      menu:       { count: 28, opacityMin: 0.05, opacityMax: 0.11 },
+      difficulty: { count: 28, opacityMin: 0.05, opacityMax: 0.11 },
+      results:    { count: 22, opacityMin: 0.04, opacityMax: 0.09 }
     };
 
     const COMBO_LEVELS = [
@@ -565,7 +590,11 @@
       if(!container) return;
       container.querySelectorAll(".float-sym").forEach(el => el.remove());
 
-      const symbols = ["+","−","×","÷","=","π","∑","√","7","3","9","2","5","8","1","6","%","!","∞","≠","²","³"];
+      const symbols = [
+        "+","−","×","÷","=","π","∑","√","∆","∞","≠","≈","≤","≥",
+        "²","³","%","!","∫","ƒ","α","β","θ","λ","µ","Ω",
+        "1","2","3","4","5","6","7","8","9","0"
+      ];
       const safeZones = [
         [0, 20, 0, 100],
         [80, 100, 0, 100],
@@ -598,29 +627,42 @@
     // ========= Ranges / problemas =========
     function getDifficultyRange(diff){
       switch(diff){
-        case "easy": return [1, 34];
-        case "medium": return [35, 99];
-        case "hard": return [100, 999];
-        case "assad": return [1000, 9999];
-        default: return [1, 34];
+        case "easy": return [1, 35];
+        case "medium": return [35, 90];
+        case "hard": return [90, 300];
+        case "assad": return [571, 3000];
+        default: return [1, 35];
       }
     }
 
-    function getMulDivRange(diff){
+    function getMultiplicationRange(diff){
       switch(diff){
         case "easy": return [1, 10];
-        case "medium": return [15, 30];
-        case "hard": return [30, 60];
-        case "assad": return [60, 110];
+        case "medium": return [10, 20];
+        case "hard": return [20, 50];
+        case "assad": return [50, 200];
         default: return [1, 10];
       }
     }
 
-    function getRangeForDifficultyCard(diff){
-      if(game.operation === "mul" || game.operation === "div"){
-        return getMulDivRange(diff);
+    function getDivisionRange(diff){
+      switch(diff){
+        case "easy": return [1, 10];
+        case "medium": return [10, 100];
+        case "hard": return [100, 500];
+        case "assad": return [500, 3000];
+        default: return [1, 10];
       }
+    }
+
+    function getOperationRange(op, diff){
+      if(op === "mul") return getMultiplicationRange(diff);
+      if(op === "div") return getDivisionRange(diff);
       return getDifficultyRange(diff);
+    }
+
+    function getRangeForDifficultyCard(diff){
+      return getOperationRange(game.operation, diff);
     }
 
     function updateDifficultyCards(){
@@ -641,40 +683,22 @@
       const diff = game.difficulty;
       let a = 0, b = 0, answer = 0;
 
-      if(diff === "assad"){
-        if(op === "add" || op === "sub"){
-          a = rand(1000, 9999);
-          b = rand(1000, 9999);
-          if(op === "sub" && a < b) [a, b] = [b, a];
-          answer = op === "add" ? a + b : a - b;
-        }
-        if(op === "mul"){
-          a = rand(60, 110);
-          b = rand(60, 110);
-          answer = a * b;
-        }
-        if(op === "div"){
-          b = rand(60, 110);
-          const quotient = rand(60, 110);
-          a = b * quotient;
-          answer = quotient;
-        }
-      }else if(op === "add"){
+      if(op === "add"){
         a = randomByDifficulty(diff);
         b = randomByDifficulty(diff);
         answer = a + b;
       }else if(op === "sub"){
         a = randomByDifficulty(diff);
         b = randomByDifficulty(diff);
-        if(diff === "easy" && a < b) [a, b] = [b, a];
+        if(a < b) [a, b] = [b, a];
         answer = a - b;
       }else if(op === "mul"){
-        const [min, max] = getMulDivRange(diff);
+        const [min, max] = getMultiplicationRange(diff);
         a = rand(min, max);
         b = rand(min, max);
         answer = a * b;
       }else if(op === "div"){
-        const [min, max] = getMulDivRange(diff);
+        const [min, max] = getDivisionRange(diff);
         b = rand(Math.max(1, min), max);
         const quotient = rand(Math.max(1, min), max);
         a = b * quotient;
@@ -685,7 +709,59 @@
       return { a, b, answer, symbol, display: `${a} ${symbol} ${b}` };
     }
 
+    function buildDivisionOptions(correctAnswer, diff, count = 4){
+      const opts = new Set([correctAnswer]);
+
+      let maxDelta;
+      switch(diff){
+        case "easy":
+          maxDelta = 3;
+          break;
+        case "medium":
+          maxDelta = 4;
+          break;
+        case "hard":
+          maxDelta = 6;
+          break;
+        case "assad":
+          maxDelta = 10;
+          break;
+        default:
+          maxDelta = 3;
+      }
+
+      const deltas = [];
+      for(let d = 1; d <= maxDelta; d++){
+        deltas.push(-d, d);
+      }
+
+      shuffle(deltas);
+
+      for(const delta of deltas){
+        if(opts.size >= count) break;
+        const value = correctAnswer + delta;
+        if(value > 0) opts.add(value);
+      }
+
+      let fallbackDelta = maxDelta + 1;
+      while(opts.size < count){
+        const plus = correctAnswer + fallbackDelta;
+        const minus = correctAnswer - fallbackDelta;
+
+        if(minus > 0) opts.add(minus);
+        if(opts.size < count) opts.add(plus);
+
+        fallbackDelta++;
+      }
+
+      return shuffle([...opts]).slice(0, count);
+    }
+
     function buildOptions(correctAnswer, op, diff, count = 4){
+      if(op === "div"){
+        return buildDivisionOptions(correctAnswer, diff, count);
+      }
+
       const opts = new Set([correctAnswer]);
       const absCorrect = Math.abs(correctAnswer);
       let spread = 10;
@@ -693,8 +769,8 @@
       if(diff === "medium") spread = 25;
       if(diff === "hard") spread = 80;
       if(diff === "assad") spread = Math.max(20, Math.round(absCorrect * 0.04));
-      if(op === "mul" || op === "div"){
-        const [, max] = getMulDivRange(diff);
+      if(op === "mul"){
+        const [, max] = getMultiplicationRange(diff);
         spread = Math.max(spread, Math.round(max * max * 0.08));
       }
       if(op === "add" || op === "sub"){
@@ -762,6 +838,16 @@
       }
     }
 
+    function getComboTimeLimitMs(diff){
+      switch(diff){
+        case "easy": return 5500;
+        case "medium": return 7000;
+        case "hard": return 9000;
+        case "assad": return 11500;
+        default: return 5500;
+      }
+    }
+
     function startSession(){
       stopSession();
       game.sessionStartTime = Date.now();
@@ -801,10 +887,27 @@
       game.questionStartTime = Date.now();
       game.questionExpired = false;
       const limit = getQuestionTimeLimitMs(game.difficulty);
+      questionTimerWrap.classList.remove("expired", "danger", "warning");
+      questionTimerBar.style.width = "100%";
+      questionTimerText.textContent = Math.ceil(limit / 1000) + "s";
 
       const tickQ = () => {
-        if(Date.now() - game.questionStartTime >= limit){
+        if(game.roundLocked || game.sessionExpired || body.dataset.screen !== "game"){
+          return;
+        }
+
+        const elapsed = Date.now() - game.questionStartTime;
+        const remaining = Math.max(0, limit - elapsed);
+        const pct = remaining / limit;
+
+        questionTimerBar.style.width = `${pct * 100}%`;
+        questionTimerText.textContent = Math.ceil(remaining / 1000) + "s";
+        questionTimerWrap.classList.toggle("warning", pct <= 0.5 && pct > 0.22);
+        questionTimerWrap.classList.toggle("danger", pct <= 0.22);
+
+        if(remaining <= 0){
           game.questionExpired = true;
+          questionTimerWrap.classList.add("expired");
           questionRafId = null;
           return;
         }
@@ -821,9 +924,77 @@
       }
     }
 
+    function startComboTimer(){
+      stopComboTimer();
+
+      game.comboTimerStartTime = Date.now();
+      game.comboTimerExpired = false;
+      game.comboTimerLimitMs = getComboTimeLimitMs(game.difficulty);
+
+      comboTimerWrap.classList.remove("active", "expired", "danger", "warning");
+      comboTimerBar.style.width = "100%";
+
+      if(game.combo <= 0){
+        return;
+      }
+
+      comboTimerWrap.classList.add("active");
+
+      const tickCombo = () => {
+        if(game.roundLocked || game.sessionExpired || body.dataset.screen !== "game"){
+          return;
+        }
+
+        const elapsed = Date.now() - game.comboTimerStartTime;
+        const remaining = Math.max(0, game.comboTimerLimitMs - elapsed);
+        const pct = remaining / game.comboTimerLimitMs;
+
+        comboTimerBar.style.width = `${pct * 100}%`;
+        comboTimerWrap.classList.toggle("warning", pct <= 0.55 && pct > 0.25);
+        comboTimerWrap.classList.toggle("danger", pct <= 0.25);
+
+        if(remaining <= 0){
+          expireComboTimer();
+          return;
+        }
+
+        comboTimerRafId = requestAnimationFrame(tickCombo);
+      };
+
+      comboTimerRafId = requestAnimationFrame(tickCombo);
+    }
+
+    function stopComboTimer(){
+      if(comboTimerRafId){
+        cancelAnimationFrame(comboTimerRafId);
+        comboTimerRafId = null;
+      }
+    }
+
+    function expireComboTimer(){
+      stopComboTimer();
+
+      if(game.comboTimerExpired || game.roundLocked || game.sessionExpired) return;
+
+      game.comboTimerExpired = true;
+      comboTimerWrap.classList.add("expired");
+      comboTimerWrap.classList.remove("active", "danger", "warning");
+      comboTimerBar.style.width = "0%";
+
+      if(game.combo > 0){
+        game.combo = 0;
+        game.comboMult = 1;
+        hideComboFeedback();
+        roundTip.textContent = "💥 Você demorou demais e perdeu o combo. Ainda dá para responder!";
+      }
+
+      updateInfoPanels();
+    }
+
     function endGameByTimeout(){
       stopSession();
       stopQuestionTimer();
+      stopComboTimer();
       game.sessionExpired = true;
       game.roundLocked = true;
       roundTip.textContent = "⏰ Tempo encerrado!";
@@ -833,14 +1004,16 @@
     }
 
     // ========= Pontuação / combo =========
-    function calcSpeedBonus(elapsedMs, limitMs){
-      if(elapsedMs >= limitMs) return 10;
-      const pct = 1 - (elapsedMs / limitMs);
-      if(pct > 0.80) return 200;
-      if(pct > 0.60) return 150;
-      if(pct > 0.40) return 100;
-      if(pct > 0.20) return 60;
-      return 30;
+    const SPEED_BONUS = {
+      fast: 180,
+      medium: 90,
+      slow: 30
+    };
+
+    function getSpeedBonus(elapsedMs){
+      if(elapsedMs < 4000) return SPEED_BONUS.fast;
+      if(elapsedMs < 7000) return SPEED_BONUS.medium;
+      return SPEED_BONUS.slow;
     }
 
     function getDiffMult(diff){
@@ -858,12 +1031,16 @@
       return 1;
     }
 
-    function calculateQuestionScore(){
+    function calculateQuestionScore(comboMultOverride = game.comboMult){
       const elapsed = Date.now() - game.questionStartTime;
-      const limit = getQuestionTimeLimitMs(game.difficulty);
-      const speed = calcSpeedBonus(elapsed, limit);
-      const raw = Math.round(speed * game.comboMult * getDiffMult(game.difficulty) * getOpMult(game.operation));
-      return Math.max(10, raw);
+      const speedBonus = getSpeedBonus(elapsed);
+      const base = 100 + speedBonus;
+      const final = base
+        * comboMultOverride
+        * getDiffMult(game.difficulty)
+        * getOpMult(game.operation);
+
+      return Math.max(10, Math.round(final / 2));
     }
 
     function onCorrectAnswer(){
@@ -914,6 +1091,7 @@
     function resetGameState(){
       stopSession();
       stopQuestionTimer();
+      stopComboTimer();
       game.points = 0;
       game.rawScore = 0;
       game.questionsAnswered = 0;
@@ -927,6 +1105,9 @@
       game.sessionExpired = false;
       game.questionStartTime = 0;
       game.questionExpired = false;
+      game.comboTimerStartTime = 0;
+      game.comboTimerExpired = false;
+      game.comboTimerLimitMs = getComboTimeLimitMs(game.difficulty);
       game.roundLocked = false;
       game.currentQuestion = null;
       game.currentOptions = [];
@@ -935,6 +1116,11 @@
       roundTip.textContent = "⏱️ Responda antes do tempo acabar para ganhar mais pontos.";
       sessionTimerBar.style.width = "100%";
       sessionTimerText.textContent = Math.ceil(game.sessionDurationMs / 1000) + "s";
+      questionTimerWrap.classList.remove("expired", "danger", "warning");
+      questionTimerBar.style.width = "100%";
+      questionTimerText.textContent = Math.ceil(getQuestionTimeLimitMs(game.difficulty) / 1000) + "s";
+      comboTimerWrap.classList.remove("active", "expired", "danger", "warning");
+      comboTimerBar.style.width = "100%";
       hideComboFeedback();
       updateInfoPanels();
     }
@@ -963,6 +1149,7 @@
       operationDisplay.textContent = game.currentQuestion.display;
       renderAnswers(game.currentOptions, game.currentQuestion.answer);
       startQuestionTimer();
+      startComboTimer();
       roundTip.textContent = "⏱️ Responda antes do tempo acabar para ganhar mais pontos.";
       updateInfoPanels();
     }
@@ -989,21 +1176,36 @@
       if(game.roundLocked || game.sessionExpired) return;
       game.roundLocked = true;
       stopQuestionTimer();
+      stopComboTimer();
 
       const allButtons = [...answersEl.querySelectorAll(".answer")];
       const isCorrect = value === correct;
       game.questionsAnswered++;
 
       if(isCorrect){
-        onCorrectAnswer();
-        const gained = calculateQuestionScore();
+        const comboWasExpired = game.comboTimerExpired;
+        let gained;
+
+        if(comboWasExpired){
+          game.combo = 1;
+          game.comboMult = 1;
+          if(game.combo > game.comboMax) game.comboMax = game.combo;
+          hideComboFeedback();
+          gained = calculateQuestionScore(1);
+        }else{
+          onCorrectAnswer();
+          gained = calculateQuestionScore();
+        }
+
         game.points += gained;
         game.rawScore += gained;
         game.correctAnswers++;
         buttonEl.classList.add("correct");
         buttonEl.textContent = "✅ " + value;
         bump(correctStat);
-        roundTip.textContent = `✅ Correto! +${gained.toLocaleString("pt-BR")} pontos.`;
+        roundTip.textContent = comboWasExpired
+          ? `✅ Correto! +${gained.toLocaleString("pt-BR")} pontos. Combo reiniciado.`
+          : `✅ Correto! +${gained.toLocaleString("pt-BR")} pontos.`;
         updateInfoPanels();
         setTimeout(advanceRound, 600);
       }else{
@@ -1093,6 +1295,7 @@
     function goToResults(){
       stopSession();
       stopQuestionTimer();
+      stopComboTimer();
       game.sessionExpired = true;
       fillResults();
       setScreen("results");
@@ -1250,7 +1453,7 @@
       showCongrats(name, rank);
       newPlayerNeeded = false;
       if(rankingPanel.classList.contains("open")){
-        loadRankingData(rankingCurrentFilter);
+        loadRankingData();
       }
     }
 
@@ -1282,6 +1485,9 @@
     });
 
     congratsHomeBtn.addEventListener("click", () => {
+      stopSession();
+      stopQuestionTimer();
+      stopComboTimer();
       congratsOverlay.classList.remove("active");
       setScreen("home");
     });
@@ -1294,29 +1500,22 @@
       rankingPanel.classList.add("open");
       rankingPanel.setAttribute("aria-hidden", "false");
       rankingToggleBtn.setAttribute("aria-expanded", "true");
-      rankingToggleBtn.style.transform = "translateY(-50%) rotate(180deg)";
-      loadRankingData(rankingCurrentFilter);
+      rankingToggleBtn.classList.add("hidden");
+      rankingToggleBtn.setAttribute("aria-hidden", "true");
+      loadRankingData();
     }
 
     function closeRankingPanel(){
       rankingPanel.classList.remove("open");
       rankingPanel.setAttribute("aria-hidden", "true");
       rankingToggleBtn.setAttribute("aria-expanded", "false");
-      rankingToggleBtn.style.transform = "translateY(-50%) rotate(0deg)";
+      rankingToggleBtn.classList.remove("hidden");
+      rankingToggleBtn.setAttribute("aria-hidden", "false");
     }
 
-    rankingFilterButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        rankingFilterButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        rankingCurrentFilter = btn.dataset.room;
-        loadRankingData(rankingCurrentFilter);
-      });
-    });
-
-    async function loadRankingData(room = "all"){
+    async function loadRankingData(){
       rankingTableBody.innerHTML = `<tr><td colspan="4" class="ranking-loading">Carregando...</td></tr>`;
-      const data = await dbGetLeaderboard(room === "all" ? null : room);
+      const data = await dbGetLeaderboard(null);
 
       if(!data.length){
         rankingTableBody.innerHTML = `<tr><td colspan="4" class="ranking-loading">Nenhuma pontuação ainda.</td></tr>`;
@@ -1346,7 +1545,7 @@
 
     setInterval(() => {
       if(rankingPanel.classList.contains("open")){
-        loadRankingData(rankingCurrentFilter);
+        loadRankingData();
       }
     }, 15000);
 
@@ -1392,12 +1591,16 @@
     });
 
     playAgainBtn.addEventListener("click", () => {
+      stopSession();
+      stopQuestionTimer();
+      stopComboTimer();
       setScreen("menu");
     });
 
     backHomeBtn.addEventListener("click", () => {
       stopSession();
       stopQuestionTimer();
+      stopComboTimer();
       playerOverlay.classList.remove("active");
       congratsOverlay.classList.remove("active");
       setScreen("home");
@@ -1430,7 +1633,6 @@
     opCards.forEach(clickOnEnter);
     diffCards.forEach(clickOnEnter);
     roomButtons.forEach(clickOnEnter);
-    rankingFilterButtons.forEach(clickOnEnter);
 
     // ========= Estado inicial =========
     updateDifficultyCards();
