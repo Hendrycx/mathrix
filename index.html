@@ -339,6 +339,7 @@
     const menuCards = [...document.querySelectorAll(".menuCard")];
     const opCards = [...document.querySelectorAll(".card.op")];
     const diffCards = [...document.querySelectorAll(".diff-card")];
+    const difficultyGrid = document.getElementById("difficultyGrid");
     const backToMenuFromDifficulty = document.getElementById("backToMenuFromDifficulty");
 
     const gameWrap = document.getElementById("gameWrap");
@@ -685,7 +686,14 @@
     }
 
     function updateDifficultyCards(){
+      const isDivision = game.operation === "div";
+      difficultyGrid.classList.toggle("division-no-brutal", isDivision);
       diffCards.forEach(card => {
+        const isBrutal = card.dataset.diff === "assad";
+        const removeForDivision = isDivision && isBrutal;
+        card.hidden = removeForDivision;
+        card.disabled = removeForDivision;
+        card.setAttribute("aria-hidden", removeForDivision ? "true" : "false");
         const desc = card.querySelector(".select-desc");
         const [min, max] = getRangeForDifficultyCard(card.dataset.diff);
         desc.textContent = `Números ${formatRangeNumber(min)}–${formatRangeNumber(max)}`;
@@ -1592,6 +1600,8 @@
     diffCards.forEach(card => {
       card.addEventListener("click", async () => {
         if(navigationLocked) return;
+        if(card.hidden) return;
+        if(game.operation === "div" && card.dataset.diff === "assad") return;
         navigationLocked = true;
         game.difficulty = card.dataset.diff;
         await runPregameAnimation();
