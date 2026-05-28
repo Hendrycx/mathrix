@@ -629,6 +629,8 @@
       gap: 16px;
       justify-content: center;
       position: relative;
+      transform: scale(0.9);
+      transform-origin: center center;
     }
 
     .game-wrap.normal-theme{
@@ -804,47 +806,6 @@
       transition:
         background 260ms linear,
         color 260ms linear;
-    }
-
-    .question-timer-wrap{
-      position: relative;
-      width: min(520px, 100%);
-      height: 16px;
-      margin: 0 auto 12px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: rgba(92,31,31,0.13);
-      border: 1px solid rgba(92,31,31,0.18);
-      box-shadow: inset 0 1px 4px rgba(0,0,0,0.12);
-    }
-
-    .question-timer-bar{
-      width: 100%;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #2d6a4f, #79c267);
-      transition: width 80ms linear, background 160ms ease;
-    }
-
-    .question-timer-wrap.warning .question-timer-bar{
-      background: linear-gradient(90deg, #d89c1d, #f5c84b);
-    }
-
-    .question-timer-wrap.danger .question-timer-bar,
-    .question-timer-wrap.expired .question-timer-bar{
-      background: linear-gradient(90deg, #b31312, #ff4b2b);
-    }
-
-    .question-timer-text{
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: 'Luckiest Guy', cursive;
-      font-size: 10px;
-      color: var(--wine);
-      letter-spacing: 0.5px;
-      text-shadow: 0 1px 0 rgba(255,255,255,0.35);
     }
 
     .combo-badge{

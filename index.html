@@ -183,10 +183,6 @@
 
         <!-- Centro -->
         <main class="center-area">
-          <div class="question-timer-wrap" id="questionTimerWrap" aria-label="Tempo restante da questão">
-            <div class="question-timer-bar" id="questionTimerBar"></div>
-            <div class="question-timer-text" id="questionTimerText">8s</div>
-          </div>
           <div class="operation" id="operationDisplay">12 + 8</div>
           <div class="combo-badge" id="comboBadge" aria-live="polite"></div>
           <div class="answers" id="answers"></div>
@@ -329,9 +325,6 @@
     const sessionTimerBar = document.getElementById("sessionTimerBar");
     const sessionTimerText = document.getElementById("sessionTimerText");
     const operationDisplay = document.getElementById("operationDisplay");
-    const questionTimerWrap = document.getElementById("questionTimerWrap");
-    const questionTimerBar = document.getElementById("questionTimerBar");
-    const questionTimerText = document.getElementById("questionTimerText");
     const comboBadge = document.getElementById("comboBadge");
     const answersEl = document.getElementById("answers");
     const comboTimerWrap = document.getElementById("comboTimerWrap");
@@ -887,9 +880,6 @@
       game.questionStartTime = Date.now();
       game.questionExpired = false;
       const limit = getQuestionTimeLimitMs(game.difficulty);
-      questionTimerWrap.classList.remove("expired", "danger", "warning");
-      questionTimerBar.style.width = "100%";
-      questionTimerText.textContent = Math.ceil(limit / 1000) + "s";
 
       const tickQ = () => {
         if(game.roundLocked || game.sessionExpired || body.dataset.screen !== "game"){
@@ -898,16 +888,9 @@
 
         const elapsed = Date.now() - game.questionStartTime;
         const remaining = Math.max(0, limit - elapsed);
-        const pct = remaining / limit;
-
-        questionTimerBar.style.width = `${pct * 100}%`;
-        questionTimerText.textContent = Math.ceil(remaining / 1000) + "s";
-        questionTimerWrap.classList.toggle("warning", pct <= 0.5 && pct > 0.22);
-        questionTimerWrap.classList.toggle("danger", pct <= 0.22);
 
         if(remaining <= 0){
           game.questionExpired = true;
-          questionTimerWrap.classList.add("expired");
           questionRafId = null;
           return;
         }
@@ -1116,9 +1099,6 @@
       roundTip.textContent = "⏱️ Responda antes do tempo acabar para ganhar mais pontos.";
       sessionTimerBar.style.width = "100%";
       sessionTimerText.textContent = Math.ceil(game.sessionDurationMs / 1000) + "s";
-      questionTimerWrap.classList.remove("expired", "danger", "warning");
-      questionTimerBar.style.width = "100%";
-      questionTimerText.textContent = Math.ceil(getQuestionTimeLimitMs(game.difficulty) / 1000) + "s";
       comboTimerWrap.classList.remove("active", "expired", "danger", "warning");
       comboTimerBar.style.width = "100%";
       hideComboFeedback();
