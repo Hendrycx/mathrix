@@ -25,14 +25,10 @@
   <header class="topbar" aria-hidden="true">
     <h2>MATHRIX</h2>
   </header>
-  <button class="ranking-toggle-btn" id="rankingToggleBtn" aria-label="Abrir ranking" aria-expanded="false">
-    &#8250;
-  </button>
 
-  <aside class="ranking-panel" id="rankingPanel" aria-label="Ranking" aria-hidden="true">
+  <aside class="ranking-panel open" id="rankingPanel" aria-label="Ranking" aria-hidden="false">
     <div class="ranking-header">
       <span class="ranking-title">Ranking</span>
-      <button class="ranking-close-btn" id="rankingCloseBtn" aria-label="Fechar ranking">✕</button>
     </div>
 
     <div class="ranking-table-wrap">
@@ -55,9 +51,9 @@
   </aside>
   <footer class="bottombar" id="bottomBar" aria-hidden="true">
     <div class="footer-content" id="footerContent">
-       <span>Jogo matemático feito para feira de matemática</span>
-      <br>
-      <strong>EREF Educador Paulo Freire</strong>
+       <span>Jogo matemático feito para feira de matemática •</span>
+      <strong> EREF Educador Paulo Freire</strong>
+      <span class="footer-creators"> • Criado por Cauã Hendryc &amp; José Dyego</span>
     </div>
   </footer>
 
@@ -293,10 +289,35 @@
       <div class="congrats-medal" id="congratsMedal"></div>
       <div class="congrats-title" id="congratsTitle"></div>
       <div class="congrats-rank" id="congratsRank"></div>
-      <button type="button" class="congrats-btn" id="congratsHomeBtn">Jogar de novo</button>
-      <button type="button" class="congrats-other-btn" id="congratsOtherBtn">Sou outro usuário</button>
+      <button type="button" class="congrats-btn" id="congratsHomeBtn">Ver ranking</button>
     </div>
   </div>
+
+  <!-- Ranking Modal centralizado (aparece após parabéns) -->
+  <div class="ranking-modal-overlay" id="rankingModalOverlay" aria-modal="true" role="dialog" aria-label="Ranking">
+    <div class="ranking-modal-card" id="rankingModalCard">
+      <div class="ranking-modal-header">
+        <span class="ranking-modal-title">🏆 Ranking</span>
+      </div>
+      <div class="ranking-modal-table-wrap">
+        <table class="ranking-table ranking-modal-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nome</th>
+              <th>Turma</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody id="rankingModalBody">
+            <tr><td colspan="4" class="ranking-loading">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button type="button" class="ranking-modal-back-btn" id="rankingModalBackBtn">Voltar</button>
+    </div>
+  </div>
+
 <script>
     // ========= Anti seleção / anti clique direito =========
     document.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -362,12 +383,13 @@
     const congratsTitle = document.getElementById("congratsTitle");
     const congratsRank = document.getElementById("congratsRank");
     const congratsHomeBtn = document.getElementById("congratsHomeBtn");
-    const congratsOtherBtn = document.getElementById("congratsOtherBtn");
 
     const rankingToggleBtn = document.getElementById("rankingToggleBtn");
     const rankingPanel = document.getElementById("rankingPanel");
-    const rankingCloseBtn = document.getElementById("rankingCloseBtn");
     const rankingTableBody = document.getElementById("rankingTableBody");
+    const rankingModalOverlay = document.getElementById("rankingModalOverlay");
+    const rankingModalBody = document.getElementById("rankingModalBody");
+    const rankingModalBackBtn = document.getElementById("rankingModalBackBtn");
 
     // ========= Estado =========
     let navigationLocked = false;
@@ -555,8 +577,12 @@
       }
 
       if(name === "game"){
-        closeRankingPanel();
+        rankingPanel.classList.add("open");
+        rankingPanel.style.display = "none";
       }else{
+        rankingPanel.style.display = "";
+        rankingPanel.classList.add("open");
+        loadRankingData();
         resetInactivityTimer();
       }
     }
@@ -623,7 +649,7 @@
         case "easy": return [1, 35];
         case "medium": return [35, 90];
         case "hard": return [90, 300];
-        case "assad": return [571, 3000];
+        case "assad": return [1000, 9999];
         default: return [1, 35];
       }
     }
@@ -640,11 +666,11 @@
 
     function getDivisionRange(diff){
       switch(diff){
-        case "easy": return [1, 10];
-        case "medium": return [10, 100];
-        case "hard": return [100, 500];
-        case "assad": return [500, 3000];
-        default: return [1, 10];
+        case "easy":   return [1, 10];
+        case "medium": return [2, 20];
+        case "hard":   return [5, 50];
+        case "assad":  return [10, 99];
+        default:       return [1, 10];
       }
     }
 
@@ -693,7 +719,15 @@
       }else if(op === "div"){
         const [min, max] = getDivisionRange(diff);
         b = rand(Math.max(1, min), max);
-        const quotient = rand(Math.max(1, min), max);
+        let quotient;
+        if(diff === "assad"){
+          // Garante dividendo entre 1000-9999
+          const qMin = Math.ceil(1000 / b);
+          const qMax = Math.min(Math.floor(9999 / b), 999);
+          quotient = qMin <= qMax ? rand(qMin, qMax) : rand(10, 99);
+        } else {
+          quotient = rand(Math.max(1, min), max);
+        }
         a = b * quotient;
         answer = quotient;
       }
@@ -1023,7 +1057,7 @@
         * getDiffMult(game.difficulty)
         * getOpMult(game.operation);
 
-      return Math.max(10, Math.round(final / 2));
+      return Math.max(10, Math.round(final));
     }
 
     function onCorrectAnswer(){
@@ -1279,7 +1313,7 @@
       game.sessionExpired = true;
       fillResults();
       setScreen("results");
-      setTimeout(() => showPlayerOverlay(newPlayerNeeded), 800);
+      setTimeout(() => showPlayerOverlay(true), 800);
     }
 
     function spawnConfetti(){
@@ -1384,31 +1418,6 @@
         return;
       }
 
-      if(name !== currentPlayer.name || room !== currentPlayer.room){
-        const existing = await dbCheckExists(name, room);
-        if(existing){
-          playerError.innerHTML = `
-            Já existe <strong>${escapeHTML(name)}</strong> na turma <strong>${room}</strong>.
-            É você de novo?
-            <button id="yesBtn" type="button">Sim</button>
-            <button id="noBtn" type="button">Não, sou outro</button>
-          `;
-
-          document.getElementById("yesBtn").onclick = () => {
-            currentPlayer.name = name;
-            currentPlayer.room = room;
-            playerError.textContent = "";
-            saveAndShowCongrats();
-          };
-          document.getElementById("noBtn").onclick = () => {
-            playerNameInput.value = "";
-            playerNameInput.focus();
-            playerError.textContent = "Escolha um nome diferente.";
-          };
-          return;
-        }
-      }
-
       currentPlayer.name = name;
       currentPlayer.room = room;
       saveAndShowCongrats();
@@ -1418,6 +1427,11 @@
       hidePlayerOverlay();
       const { name, room } = currentPlayer;
       const payload = buildFinalScorePayload(name, room);
+
+      // Busca score anterior antes de salvar
+      const existing = await dbCheckExists(name, room);
+      const previousScore = existing ? existing.score : null;
+      const previousRank = previousScore !== null ? await dbGetRank(name, room) : null;
 
       await dbUpsertScore(
         name,
@@ -1429,68 +1443,93 @@
         payload.accuracy
       );
 
-      const rank = await dbGetRank(name, room);
-      showCongrats(name, rank);
+      const newRank = await dbGetRank(name, room);
+      const isRecord = previousScore !== null && payload.score > previousScore;
+      const isFirstTime = previousScore === null;
+
+      showCongrats(name, newRank, isRecord, isFirstTime, previousRank);
       newPlayerNeeded = false;
-      if(rankingPanel.classList.contains("open")){
-        loadRankingData();
-      }
+      loadRankingData();
     }
 
-    function showCongrats(name, rank){
+    function showCongrats(name, rank, isRecord, isFirstTime, previousRank){
       const medals = { 1: "🥇", 2: "🥈", 3: "🥉" };
-      congratsMedal.textContent = medals[rank] ?? "";
+      congratsMedal.textContent = (!isFirstTime && rank && rank <= 3) ? medals[rank] : "";
       congratsTitle.innerHTML = `Parabéns, <strong>${escapeHTML(name)}</strong>!`;
 
-      if(rank === 1){
-        congratsRank.textContent = "Você está em 1º lugar! 🏆";
-      }else if(rank && rank <= 3){
-        congratsRank.textContent = `Você está em ${rank}º lugar!`;
-      }else if(rank){
-        congratsRank.textContent = `Você está em #${rank} no ranking.`;
-      }else{
-        congratsRank.textContent = hasDatabase()
-          ? "Sua pontuação foi registrada fora do top 50."
-          : "Ranking indisponível no momento.";
+      if(isFirstTime){
+        congratsRank.textContent = rank
+          ? `Você entrou no ranking em #${rank}!`
+          : "Sua pontuação foi registrada!";
+      } else if(isRecord){
+        const posGained = previousRank && rank ? previousRank - rank : 0;
+        if(posGained > 0){
+          congratsRank.innerHTML = `🎉 NOVO RECORDE! Você subiu ${posGained} posição${posGained > 1 ? "ões" : ""} e está em #${rank}!`;
+        } else {
+          congratsRank.innerHTML = `🎉 NOVO RECORDE! Você está em #${rank}!`;
+        }
+      } else {
+        congratsRank.textContent = "Sua pontuação foi menor. Você não subiu posições no ranking.";
       }
 
       congratsOverlay.classList.add("active");
     }
 
-    congratsOtherBtn.addEventListener("click", () => {
+    congratsHomeBtn.addEventListener("click", () => {
       congratsOverlay.classList.remove("active");
-      newPlayerNeeded = true;
-      currentPlayer = { name: null, room: null };
-      showPlayerOverlay(true);
+      showRankingModal();
     });
 
-    congratsHomeBtn.addEventListener("click", () => {
-      stopSession();
-      stopQuestionTimer();
-      stopComboTimer();
-      congratsOverlay.classList.remove("active");
+    // ========= Ranking Modal =========
+    async function showRankingModal(){
+      rankingModalOverlay.classList.add("active");
+      rankingModalBody.innerHTML = `<tr><td colspan="4" class="ranking-loading">Carregando...</td></tr>`;
+      const data = await dbGetLeaderboard(null);
+
+      if(!data.length){
+        rankingModalBody.innerHTML = `<tr><td colspan="4" class="ranking-loading">Nenhuma pontuação ainda.</td></tr>`;
+        return;
+      }
+
+      const posIcons = ["🥇","🥈","🥉"];
+      const posCls = ["gold","silver","bronze"];
+
+      rankingModalBody.innerHTML = data.map((row, i) => {
+        const pos = i + 1;
+        const isCurr = row.name === currentPlayer.name && row.room === currentPlayer.room;
+        const posHtml = pos <= 3
+          ? `<span class="rank-pos ${posCls[i]}">${posIcons[i]}</span>`
+          : `<span class="rank-pos">${pos}</span>`;
+        return `
+          <tr class="${isCurr ? "current-player" : ""}">
+            <td>${posHtml}</td>
+            <td title="${escapeHTML(row.name)}">${escapeHTML(row.name)}</td>
+            <td>${escapeHTML(row.room)}</td>
+            <td>${Number(row.score).toLocaleString("pt-BR")}</td>
+          </tr>
+        `;
+      }).join("");
+
+      // Scroll até a linha do jogador atual
+      setTimeout(() => {
+        const curr = rankingModalBody.querySelector(".current-player");
+        if(curr) curr.scrollIntoView({ block: "center", behavior: "smooth" });
+      }, 100);
+    }
+
+    rankingModalBackBtn.addEventListener("click", () => {
+      rankingModalOverlay.classList.remove("active");
       setScreen("home");
     });
 
-    // ========= Ranking =========
-    rankingToggleBtn.addEventListener("click", openRankingPanel);
-    rankingCloseBtn.addEventListener("click", closeRankingPanel);
-
+    // ========= Ranking lateral (sempre aberto fora do game) =========
     function openRankingPanel(){
       rankingPanel.classList.add("open");
-      rankingPanel.setAttribute("aria-hidden", "false");
-      rankingToggleBtn.setAttribute("aria-expanded", "true");
-      rankingToggleBtn.classList.add("hidden");
-      rankingToggleBtn.setAttribute("aria-hidden", "true");
       loadRankingData();
     }
 
     function closeRankingPanel(){
-      rankingPanel.classList.remove("open");
-      rankingPanel.setAttribute("aria-hidden", "true");
-      rankingToggleBtn.setAttribute("aria-expanded", "false");
-      rankingToggleBtn.classList.remove("hidden");
-      rankingToggleBtn.setAttribute("aria-hidden", "false");
+      // painel é sempre fixo — não fecha
     }
 
     async function loadRankingData(){
@@ -1605,9 +1644,7 @@
       backHomeBtn,
       playerConfirmBtn,
       congratsHomeBtn,
-      congratsOtherBtn,
-      rankingToggleBtn,
-      rankingCloseBtn
+      rankingModalBackBtn
     ].forEach(clickOnEnter);
 
     opCards.forEach(clickOnEnter);
